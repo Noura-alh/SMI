@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> SMI | Manage Profile</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Font Awesome -->
+     <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
+  <!-- Theme style -->
+    <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
+
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+    <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+
+
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper"  >
+
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+
+      <span class="logo-mini"  ><img  height="45" width="38" src="../../dist/img/slogo.png" alt="User Image"></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg">  <img  height="42" width="130" src="../../dist/img/newlogo.png" alt="User Image"></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">1</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 1 notifications</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-warning text-yellow"></i>
+                      This is to inform you that there is a
+                      suspicious transaction has been detected in
+                      “Client Name: Khaild, ID:12345” account
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View Cases</a></li>
+            </ul>
+          </li>
+
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="../../dist/img/Riyadh1.png" class="user-image" alt="User Image">
+              <span class="hidden-xs">Sarah Sami</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <img src="../../dist/img/Riyadh1.png" class="img-circle" alt="User Image">
+
+                <p>
+                  Sarah Sami
+                  <small>AML Officer</small>
+                </p>
+              </li>
+              <!-- Menu Body -->
+
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div style="margin-left:38%;">
+                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#"><i class="fa fa-sign-out"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="../../dist/img/Riyadh.png" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>Sarah Sami</p>
+          <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
+        </div>
+      </div>
+
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">MAIN NAVIGATION</li>
+
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-search"></i> <span>Search For Client</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+
+              <form action="#" method="get" class="sidebar-form">
+              <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button>
+                    </span>
+              </div>
+            </form>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="home.html">
+            <i class="fa fa-home"></i> <span>Home</span>
+            <span class="pull-right-container">
+
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="ManageProfile.html">
+          <span>Manage Profile</span>
+            <span class="pull-right-container">
+
+            </span>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="ManageBankData.html">
+          <span>Manage Bank Data</span>
+            <span class="pull-right-container">
+
+            </span>
+          </a>
+        </li>
+
+
+        <li>
+          <a href="cases.html">
+          <span>View Cases</span>
+            <span class="pull-right-container">
+
+            </span>
+          </a>
+        </li>
+
+
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <div class="container">
+
+      <section class="content-header">
+
+        <ol class="breadcrumb">
+          <li><a href="home.html"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="bankProfile.html">Profile</a></li>
+          <li class="active">Manage Profile</li>
+        </ol>
+      </section>
+
+    <h1>Manage Profile</h1>
+	<div class="row">
+      <!-- left column -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <img src="../../dist/img/Riyadh.png" class="avatar img-circle" alt="avatar" width="70" height="80">
+          <h6>Upload a photo</h6>
+
+          <input type="file" class="form-control">
+        </div>
+      </div>
+
+      <!-- edit form column -->
+
+      <div class="col-md-9 personal-info">
+        <h3 style="color:#004D40;"> <b> Personal info</b></h3>
+
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">First name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Sara">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">Last name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Sami">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">Bank Name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Riyadh Bank">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">AML Officer Email:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Saraemail@gmail.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Username:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" value="Sarauser">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Confirm password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8" id="wrapperH">
+              <input type="button" class="btn btn-primary"value="Save Changes" onclick="deleteAccount1()">
+
+              <input type="reset" class="btn btn-default" value="Cancel" class="btn btn-primary">
+            </div>
+            <script>
+            function deleteAccount1(){
+            confirm("Are you sure you want to save changes?");
+              }
+          </script>
+
+          </br></br></br> </br>
+            <div style="margin-left:48%;">
+                <input type="button" class="btn btn-primary"value="Delte Profile" onclick="deleteAccount()" style="background-color:#A10303; width:39%;">
+                <script>
+                function deleteAccount(){
+                confirm("Are you sure you want to delete profile?");
+                  }
+              </script>
+
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+  </div>
+
+
+
+  <!-- /.content-wrapper -->
+  <!--  <footer class="main-footer">
+
+  </footer>-->
+
+  <!-- Control Sidebar -->
+
+  <!-- /.control-sidebar -->
+  <!-- Add the sidebar's background. This div must be placed
+       immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+
+<script>
+    location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
+</script>
+<!-- Bootstrap 3.3.7 -->
+
+<script>
+    location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
+</script>
+
+<!-- Slimscroll -->
+
+<script>
+    location.href = Flask.url_for('bower_components/jquery-slimscroll/jquery.slimscroll.min.js', {});
+</script>
+
+<!-- AdminLTE App -->
+
+<script>
+    location.href = Flask.url_for('dist/js/adminlte.min.js', {});
+</script>
+
+
+
+</body>
+</html>
