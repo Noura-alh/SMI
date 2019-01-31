@@ -188,7 +188,6 @@ class GeneralSearch:
                 sum_of_frequencies += values
                 numOfApearance += 1
         try:
-            #max(100)*size*apearance
 
             SearchClass = (sum_of_frequencies / (numOfApearance * 10))
         except ZeroDivisionError :
@@ -219,15 +218,6 @@ class GeneralSearch:
 
 
 
-a = GeneralSearch('"بدورالريس"')
+a = GeneralSearch('"محمد يزبك"')
 a.google_search()
-
-'''for each in result:
-    for i in range(0, 10):
-        print('TITLES \n')
-        doc = each['items'][i]['title']
-        print(doc)
-        print('CONTENT \n')
-        doc = each['items'][i]['snippet']
-        print(doc) '''
 
