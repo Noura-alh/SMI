@@ -191,7 +191,10 @@ class GeneralSearch:
                 numOfApearance += 1
         try:
 
-            SearchClass = (sum_of_frequencies / (numOfApearance * 10))
+            SearchClass = ((numOfApearance * max_frequency) / (16))
+            #Normalization
+            if SearchClass > 1:
+                SearchClass = 1
         except ZeroDivisionError :
             SearchClass =0
 
@@ -207,6 +210,7 @@ class GeneralSearch:
 
 
         print('Number of Words apeared from the list', numOfApearance)
+        print('MAX FREQUENCY',max_frequency)
         print('Frequeancy', sum_of_frequencies)
         print('SearchClass Weight', SearchClass)
         print('Client Class', clientClass)
@@ -220,6 +224,6 @@ class GeneralSearch:
 
 
 
-a = GeneralSearch('"محمد يزبك"')
+a = GeneralSearch('"حجاج العجمي"')
 a.google_search()
 
