@@ -181,10 +181,12 @@ class GeneralSearch:
 
         numOfApearance = 0
         sum_of_frequencies = 0
+        max_frequency = 0
         SearchClass = 0
         clientClass = ''
         for keys, values in self.keyWords.items():
             if values > 0 :
+                max_frequency = max(self.keyWords.values())
                 sum_of_frequencies += values
                 numOfApearance += 1
         try:
