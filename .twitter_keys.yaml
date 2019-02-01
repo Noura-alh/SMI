@@ -1,0 +1,5 @@
+search_tweets_api:
+  account_type: premium
+  endpoint:  https://api.twitter.com/1.1/tweets/search/fullarchive/SMI.json 
+  consumer_key: gkq9WUZt8g5wLAH6QuVPSeFta
+  consumer_secret: FZTA8UsMQ8ofJ1rDOfPu5wUSCoiTF3wLU1hnNTHtHWrznB1oI9
