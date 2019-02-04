@@ -4,6 +4,7 @@ from DBconnection import connection
 import requests
 from bs4 import BeautifulSoup
 from googleapiclient.discovery import build
+from TwitterAPI import TwitterAPI
 import nltk
 import re
 from nltk.corpus import stopwords
@@ -38,6 +39,33 @@ class GeneralSearch:
             cursor.close()
         except Exception as e:
             print(str(e))
+
+
+
+    def twitter_search(self):
+
+        SEARCH_TERM = self.clientName
+        PRODUCT = 'fullarchive'
+        LABEL = 'TestSMI'
+        SANDBOX_CONSUMER_KEY = ''
+        SANDBOX_CONSUMER_SECRET = ''
+        SANDBOX_TOKEN_KEY = ''
+        SANDBOX_TOKEN_SECRECT = ''
+
+        api = TwitterAPI(SANDBOX_CONSUMER_KEY,
+                         SANDBOX_CONSUMER_SECRET,
+                         SANDBOX_TOKEN_KEY,
+                         SANDBOX_TOKEN_SECRECT)
+
+        r = api.request('tweets/search/%s/:%s' % (PRODUCT, LABEL),
+                        {'query': SEARCH_TERM})
+        f = open("Twitterresult.txt", "w+")
+        for item in r:
+            f.write(item['text'] + '\n')
+            self.document = self.document + '\n'+ item['text']
+            print(item['text'] if 'text' in item else item)
+
+        f.close()
 
     def google_search(self):
         '''
@@ -225,5 +253,6 @@ class GeneralSearch:
 
 
 a = GeneralSearch('"حجاج العجمي"')
+a.twitter_search()
 a.google_search()
 
