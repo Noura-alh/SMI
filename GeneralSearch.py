@@ -1,16 +1,14 @@
-from flask import Flask, redirect, render_template, request, session, abort, url_for
-from flaskext.mysql import MySQL
-from DBconnection import connection
-import requests
-from bs4 import BeautifulSoup
+from DBconnection import connection, connection2
 from googleapiclient.discovery import build
 from TwitterAPI import TwitterAPI
+from datetime import datetime
 import nltk
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 import math
 import pprint
+import json
 
 
 class GeneralSearch:
@@ -22,8 +20,14 @@ class GeneralSearch:
         self.textDocument = ''
         self.cleanText = ''
         self.keyWords = {}
-        self.GOOGLE_API_KEY = "AIzaSyDVjsiH1KjjI7Wus5imNPXFpdczbR5Iaqg"
-        self.GOOGLE_CSE_ID = "002858524502186211496:qscl9gemjug" # Google Custom search engine ID
+        self.cacheResult = {
+            "googleResult": [],
+            "twitterResult": [],
+        } # to cache the result and store it on the data base
+        self.tweets = []
+        self.ResultGoogle = []
+        self.GOOGLE_API_KEY = ""
+        self.GOOGLE_CSE_ID = "" # Google Custom search engine ID
 
         try:
             cursor, conn = connection()
@@ -62,10 +66,13 @@ class GeneralSearch:
         f = open("Twitterresult.txt", "w+")
         for item in r:
             f.write(item['text'] + '\n')
+            self.tweets.append(item['text'])
             self.document = self.document + '\n'+ item['text']
             print(item['text'] if 'text' in item else item)
 
         f.close()
+        self.tweets = set(self.tweets)
+        self.cacheResult['twitterResult'].append(self.tweets)
 
     def google_search(self):
         '''
@@ -96,10 +103,15 @@ class GeneralSearch:
                 print('TITLES \n')
                 print(each['items'][i]['title'])
                 self.document = self.document + '\n' + each['items'][i]['title']
+                self.ResultGoogle.append(each['items'][i]['title'])
                 print('CONTENT \n')
                 print(each['items'][i]['snippet'])
                 self.document = self.document + '\n' + each['items'][i]['snippet']
+                self.ResultGoogle.append(each['items'][i]['snippet'])
         print('AFTER SUM \n'+self.document)
+        self.ResultGoogle = set(self.ResultGoogle)
+        self.cacheResult['googleResult'].append(self.ResultGoogle)
+
 
         self.textDocument = sent_tokenize(self.document)
         self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
@@ -109,38 +121,6 @@ class GeneralSearch:
         self.calculate_TFIDF()
 
 
-
-
-
-    def run(self):
-        '''
-        this function run a search on google and store the result in one string
-        '''
-        response = requests.get(self.url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        print('Title')
-        for item in soup.select(".r a"):
-            print(item.text)
-            self.document = self.document + '\n' + item.text
-
-
-        print('Content')
-        for item in soup.select(".g span.st"):
-            print(item.text)
-            self.document = self.document + '\n' + item.text
-
-
-        self.textDocument = sent_tokenize(self.document)
-        self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
-
-        self.docInfo = self.createDocuments(self.cleanText)
-
-        '''for keys, values in self.keyWords.items():
-            print(keys)
-            print(values)'''
-        self.create_freq_dict(self.cleanText)
-        self.calculate_TFIDF()
 
     def cleanDocument(self, doc):
         '''
@@ -242,17 +222,45 @@ class GeneralSearch:
         print('Frequeancy', sum_of_frequencies)
         print('SearchClass Weight', SearchClass)
         print('Client Class', clientClass)
+        print('JSON Format')
+        print(self.cacheResult)
+        #with open("searchfiles/HajajAlajmi.json", "w") as write_file:
+            #json.dump(self.cacheResult, write_file)
 
 
 
 
+        #SAVING BEFORE CLEANING
 
+        '''f = open("searchfiles/%s.txt" % (self.clientName), "w+")
+        for each in self.tweets:
+            f.write(each)
+        for each in self.ResultGoogle:
+            f.write(each)
+        f.close()'''
+
+        date_now = datetime.now()
+        formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
+
+        cur, db = connection2()
+
+        #SAVING AFTER CLEANING
+        f = open("searchfiles/%s.txt" % (self.clientName), "w+")
+        for each in self.cleanText:
+            f.write(each+'\n')
+            query = 'INSERT INTO generalSearch (searchDate, searchContent) VALUES(%s, %s)'
+            val = (formatted_date, each)
+            cur.execute(query, val)
+        f.close()
+        db.commit()
+        cur.close()
+        db.close()
 
 
 
 
 
 a = GeneralSearch('"حجاج العجمي"')
-a.twitter_search()
+#a.twitter_search()
 a.google_search()
 
