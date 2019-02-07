@@ -34,6 +34,35 @@ def register():
 
 
 @app.route("/User_register", methods=['GET', 'POST'])
+def Registeratin():
+    fullName = request.form['name']
+    userName = request.form['username']
+    bankName = request.form['bankName']
+    email = request.form['email']
+    confirmEmail = request.form['confirmEmail']
+    password = request.form['password']
+    confirmPass = request.form['confirmPassword']
+
+    #Checking If the account(user_name) is already registered.
+    cursor.execute("SELECT * FROM AMLOfficer WHERE userName = '"+userName+"'")
+    data = cursor.fetchone()
+
+    if not(data is None):
+        return 'This Username is already registered'
+
+    # Checking If the account(email) is already registered.
+    cursor.execute("SELECT * FROM AMLOfficer WHERE email = '" + email + "'")
+    data = cursor.fetchone()
+
+    if not (data is None):
+        return 'This Email is already registered'
+
+
+
+
+
+
+
 
 
 

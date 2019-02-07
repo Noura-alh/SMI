@@ -26,8 +26,8 @@ class GeneralSearch:
         } # to cache the result and store it on the data base
         self.tweets = []
         self.ResultGoogle = []
-        self.GOOGLE_API_KEY = ""
-        self.GOOGLE_CSE_ID = "" # Google Custom search engine ID
+        self.GOOGLE_API_KEY = "AIzaSyDVjsiH1KjjI7Wus5imNPXFpdczbR5Iaqg"
+        self.GOOGLE_CSE_ID = "002858524502186211496:qscl9gemjug" # Google Custom search engine ID
 
         try:
             cursor, conn = connection()
@@ -51,10 +51,10 @@ class GeneralSearch:
         SEARCH_TERM = self.clientName
         PRODUCT = 'fullarchive'
         LABEL = 'TestSMI'
-        SANDBOX_CONSUMER_KEY = ''
-        SANDBOX_CONSUMER_SECRET = ''
-        SANDBOX_TOKEN_KEY = ''
-        SANDBOX_TOKEN_SECRECT = ''
+        SANDBOX_CONSUMER_KEY = 'JR6dkIC3Cm0E9iQiFQQnRQDXl'
+        SANDBOX_CONSUMER_SECRET = 'zbhilbf0TpELOLvmmx83LgcYYG3p9hWqvOnJGGuY75XyeI0DIm'
+        SANDBOX_TOKEN_KEY = '557269145-mDE9g2ern37MjnzUQO3e8PeRpiteF3jd8RSgJuGd'
+        SANDBOX_TOKEN_SECRECT = 'I1d8sI0pVC4TdDDdohCy1WgZ2GvZOgkJx7C5FBenIvrDL'
 
         api = TwitterAPI(SANDBOX_CONSUMER_KEY,
                          SANDBOX_CONSUMER_SECRET,
