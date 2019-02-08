@@ -1,7 +1,8 @@
-from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect
+from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session
 from flaskext.mysql import MySQL
 from forms import RegistrationForm , LoginForm
 from DBconnection import connection2
+
 
 
 app = Flask(__name__)
@@ -76,8 +77,10 @@ def register():
           db.commit()
           cur.close()
           db.close()
-          flash(f'Account created for {form.username.data} Successfully !', 'success')
-      return redirect(url_for('bankP'))
+          session["username"] = form.username.data
+          session["email"] = form.email.data
+          flash(f'Account created for {session["username"]} Successfully !', 'success')
+      return redirect(url_for('bankP')), session["username"],session["email"]
 
   return render_template('Register.html', form=form)
 
@@ -89,6 +92,7 @@ def register():
 
 @app.route("/bankProfile")
 def bankP():
+
     return render_template("bankProfile.html")
 
 @app.route("/ManageProfile")
