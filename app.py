@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session
 from flaskext.mysql import MySQL
-from forms import RegistrationForm , LoginForm
+from forms import RegistrationForm , LoginForm, forgotPassForm
 from DBconnection import connection2
 
 
@@ -32,21 +32,36 @@ def home():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.username.data == 'admin' and form.password.data == 'password':
+
+        #Check id user exisit in the database
+        cur, db = connection2()
+        query = "SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "' AND password = '" + form.password.data + "' "
+        cur.execute(query)
+        data1 = cur.fetchone()
+        if not (data1 is None):
+            flash('Invalid username or password please try again', 'danger')
+            return render_template('Register.html', form=form)
+        else:
+            query = "SELECT email FROM AMLOfficer WHERE userName = '" + form.username.data + "'"
+            cur.execute(query)
+            useremail = cur.fetchone()
+            session["username"] = form.username.data
+            session["email"] = useremail
             flash(f'Welcome back {form.username.data}', 'success')
             return redirect(url_for('bankP'))
-        else:
-            flash('Login Unsuccessful, Please check username and password','danger')
-
+        db.commit()
+        cur.close()
+        db.close()
     return render_template('login.html', form=form)
 
-'''
+
 @app.route('/logout')
 def logout():
-   # remove the username from the session if it is there
+   # remove the username and email from the session if it is there
    session.pop('username', None)
-   return redirect(url_for('index'))
-'''
+   session.pop('email', None)
+   return redirect(url_for('home'))
+
 
 
 
@@ -80,19 +95,34 @@ def register():
           session["username"] = form.username.data
           session["email"] = form.email.data
           flash(f'Account created for {session["username"]} Successfully !', 'success')
-      return redirect(url_for('bankP')), session["username"],session["email"]
+      return redirect(url_for('bankP'))
 
   return render_template('Register.html', form=form)
 
 
 
+@app.route("/forgotPassword",methods=['GET', 'POST'])
+def forgotPass():
+    form = forgotPassForm()
+    if form.validate_on_submit():
+        # Check id user exisit in the database
+        cur, db = connection2()
+        query = "SELECT * FROM SMI_DB.AMLOfficer WHERE email ='" + form.email.data + "'"
+        cur.execute(query)
+        data1 = cur.fetchone()
+        if (data1 is None):
+            flash('Invalid Email', 'danger')
+            return render_template('forgotPassword.html', form=form)
+
+
+
+    return render_template("forgotPassword.html", form =form)
 
 
 
 
 @app.route("/bankProfile")
 def bankP():
-
     return render_template("bankProfile.html")
 
 @app.route("/ManageProfile")
@@ -100,9 +130,7 @@ def manageProfile():
     return render_template("ManageProfile.html")
 
 
-@app.route("/test")
-def translate():
-    return render_template("test.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
