@@ -21,20 +21,11 @@ cursor1 = conn.cursor()
 
 
 
-#@app.route("/")
-#def index():
-    #return render_template("index.html", title="RequestAccount")
-
-
 @app.route("/")
 def home():
     return render_template("home.html")
 
 
-@app.route("/Register")
-def register():
-    form = RegistrationForm()
-    return render_template('Register.html', form =form)
 
 @app.route("/TestRegister", methods=['GET', 'POST'])
 def testRegister():
@@ -49,8 +40,8 @@ def testRegister():
 
 
 
-@app.route("/User_register", methods=['GET', 'POST'])
-def Registeratin():
+@app.route("/Register", methods=['GET', 'POST'])
+def register():
   ''' fullName = request.form['name']
     userName = request.form['username']
     #bankName = request.form['bankName']
@@ -76,50 +67,42 @@ def Registeratin():
     return 'Working'   '''
   form = RegistrationForm()
   if form.validate_on_submit():
-      flash(f'Account created for {form.username.data}!', 'success')
-      return redirect(url_for('home'))
+      flash(f'Account created for {form.username.data} Successfully !', 'success')
+      return redirect(url_for('bankP'))
 
-  return render_template('Register.html', form=form)
-
-
+  return render_template('new.html', form=form)
 
 
 
 
-
-
-
-
-
-
-
-
-
-@app.route("/login")
+'''@app.route("/login")
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    return render_template('login.html', form=form)'''
 
 
 #AMLOfficer Login
 
-@app.route("/checkUser", methods=['GET', 'POST'])
-def check():
-    if  request.method == "POST":
-        user_name = request.form['user']
-        password = request.form['password']
-        cursor.execute("SELECT * FROM AMLOfficer WHERE userName='"+user_name+"' and password= '"+password+"'")
-        user = cursor.fetchone()
-        cursor.close()
-
-        if len(user) is 1:
-            return redirect(url_for("bankP"))
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.username.data == 'admin' and form.password.data == 'password':
+            flash(f'You have been logged in!!', 'success')
+            return redirect(url_for('bankP'))
         else:
-            return "Failed"
+            flash('Login Unsuccessful, Please check username and password','danger')
+
+    return render_template('login.html', form=form)
 
 
-@app.route("/bankP")
+@app.route("/bankProfile")
 def bankP():
     return render_template("bankProfile.html")
+
+@app.route("/ManageProfile")
+def manageProfile():
+    return render_template("ManageProfile.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

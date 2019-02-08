@@ -195,7 +195,20 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
     <section class="content-header">
+
       <h1>
         Bank Profile
 
@@ -207,6 +220,8 @@
 
       </ol>
     </section>
+
+
 </br>
     <!-- Main content -->
     <section class="content">

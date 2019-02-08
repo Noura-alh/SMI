@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> SMI | Log in</title>
+  <title> SMI | Login </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
-
+   <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
   <!-- Font Awesome -->
-
-    <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <!-- Theme style -->
+  <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+   <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
 
-     <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,108 +26,190 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <style>
+  .container {
+      position: relative;
+      text-align: center;
+      color: white;
+  }
+
+  .bottom-left {
+      position: absolute;
+      bottom: 8px;
+      left: 16px;
+  }
+
+  .top-left {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+  }
+
+  .top-right {
+      position: absolute;
+      top: 8px;
+      right: 16px;
+  }
+
+  .bottom-right {
+      position: absolute;
+      bottom: 8px;
+      right: 16px;
+  }
+
+  .centered {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+  </style>
+
 </head>
-
-
-<body class="hold-transition login-page">
-
-<div class="login-box">
-  <div class="login-logo">
-      <img height="120" width="250" src="{{url_for('static', filename='dist/img/newlogo1.png')}}" />
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    <!--<p class="login-box-msg">Sign in to start your session</p>-->
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body  class="hold-transition skin-blue layout-top-nav ">
 
 
 
-    <!-- /.social-auth-links -->
+<div style="background-color: #e5e6e8;" class="wrapper">
 
 
-    <div class="box box-default">
 
-      <form action="/checkUser" method="post">
+  <header class="main-header">
+    <!-- Logo -->
 
-      <div class="box-header">
-        <h3 class="box-title">Log in</h3>
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+
+      <!-- logo for regular state and mobile devices -->
+
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top"  >
+      <!-- Sidebar toggle button-->
+
+
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+
+          <!-- Notifications: style can be found in dropdown.less -->
+
+
+          <!-- User Account: style can be found in dropdown.less -->
+
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+              <a href="{{ url_for('home') }}">Home</a>
+          </li>
+
+          <li>
+              <a href="{{ url_for('register') }}">Register</a>
+          </li>
+
+        </ul>
       </div>
-      <div class="box-body">
-        <!-- Date -->
-        <div class="form-group has-feedback">
-          <input type="text" class="form-control" placeholder="Username" name="user">
-          <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+    </nav>
+  </header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
+
+<div class="register-box">
+  <div class="register-logo">
+
+            <img height="120" width="250" src="{{url_for('static', filename='dist/img/newlogo1.png')}}" />
+
+  </div>
+
+  <div class="register-box-body">
+    <form action="" method="post">
+    {{ form.hidden_tag() }}
+    <!-- drop down list here-->
+      <div class="form-group has-feedback">
+          {{ form.username.label(class="form-control-label") }}
+
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif %}
+
+        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+         {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-lg") }}
+                    {% endif %}
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="row">
+
+        <!-- /.col -->
+        <div class="col-xs-6" style="margin-left:25%">
+            {{ form.submit(class="btn btn-primary btn-block btn-flat") }}
         </div>
-        <!-- /.form group -->
 
-        <!-- Date range -->
-        <div class="form-group has-feedback">
-          <input type="text" class="form-control" placeholder="Password" name="password">
-          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-        </div>
-
-        <!-- /.form group -->
+        <script>
+        function pending(){
+        alert("Sorry! invalid input");
+          }
+      </script>
 
 
-        <!-- /.form group -->
 
-        <!-- Date and time range -->
-        <!-- <div class="form-group">
-          <label>Choose Login Type:</label>
-</br>
-
-  <select name="type">
-  <option value= 0 >Bank</option>
-  <option value= 1 >Ministry Of Interior</option>
-  </select>
-        </div> -->
+        <!-- /.col -->
+      </div>
+    </form>
 
 
-        <div class="col-xs-4" style="margin-left:35%;">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-
-        </div>
-
-        <!-- /.form group -->
-
+  </div>
+  <!-- /.form-box -->
 </div>
-</br>
-      <div style="margin-left:32%;">
-      <a href="forgetpassword.html">I forgot my password</a><br>
-      <a href="Register.html" class="text-center">Create a new account</a>
-    </div>
-  <!-- /.login-box-body -->
-
-
-</form>
-<!-- /.login-box -->
-
-
+<!-- /.register-box -->
 
 <!-- jQuery 3 -->
+</div>
+</div>
+
 
 <script>
     location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
 </script>
 <!-- Bootstrap 3.3.7 -->
-
 <script>
     location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
 </script>
-<!-- iCheck -->
+<!-- SlimScroll -->
+
 <script>
-    location.href = Flask.url_for('plugins/iCheck/icheck.min.js\'', {});
+    location.href = Flask.url_for('bower_components/jquery-slimscroll/jquery.slimscroll.min.js', {});
 </script>
+<!-- AdminLTE App -->
+
 <script>
-  $(function () {
-    $('input').iCheck({
-      checkboxClass: 'icheckbox_square-blue',
-      radioClass: 'iradio_square-blue',
-      increaseArea: '20%' /* optional */
-    });
-  });
+    location.href = Flask.url_for('dist/js/adminlte.min.js', {});
 </script>
-
-
-
 </body>
 </html>
