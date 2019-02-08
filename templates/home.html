@@ -16,13 +16,12 @@
        folder instead of downloading all of them to reduce the load. -->
    <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
 
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+
+
+
+
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -45,24 +44,7 @@
       left: 20px;
   }
 
-  .top-right {
-      position: absolute;
-      top: 8px;
-      right: 16px;
-  }
 
-  .bottom-right {
-      position: absolute;
-      bottom: 8px;
-      right: 16px;
-  }
-
-  .centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-  }
   </style>
 
 </head>
@@ -71,13 +53,7 @@
 <div class="wrapper">
 
   <header class="main-header">
-    <!-- Logo -->
 
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-
-      <!-- logo for regular state and mobile devices -->
-
-    <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top"  >
       <!-- Sidebar toggle button-->
       <span class="logo-lg">  <img height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}" /></span>
@@ -86,18 +62,93 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
 
-          <!-- Notifications: style can be found in dropdown.less -->
+              <!-- Start Translation code -->
+
+              <!-- This line adds jquery to the page, otherwise the script tags at the bottom will not run -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Google Translate Element begin -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', includedLanguages: 'en,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style type="text/css">
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
+        div#google_translate_element div.goog-te-gadget-simple {
+            border: none;
+            background-color: transparent;
+            /*background-color: #17548d;*/ /*#e3e3ff*/
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
+            text-decoration: none;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
+            color: #aaa;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
+            color: white;
+        }
+
+        .goog-te-gadget-icon {
+            display: none !important;
+            /*background: url("url for the icon") 0 0 no-repeat !important;*/
+        }
+
+        /* Remove the down arrow */
+        /* when dropdown open */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
+            display: none;
+        }
+        /* after clicked/touched */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(118, 118, 118);"] {
+            display: none;
+        }
+        /* on page load (not yet touched or clicked) */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
+            display: none;
+        }
+
+        /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
+            display: none;
+        }
+        /* Remove span with left border line | (next to the arrow) in Edge & IE11 */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left-color: rgb(187, 187, 187); border-left-width: 1px; border-left-style: solid;"] {
+            display: none;
+        }
+        /* HIDE the google translate toolbar */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */
+    </style>
+               <!-- End Translation code -->
 
 
-          <!-- User Account: style can be found in dropdown.less -->
 
-          <!-- Control Sidebar Toggle Button -->
           <li>
               <a href="{{ url_for('login') }}">Login</a>
           </li>
 
           <li>
               <a href="{{ url_for('register') }}">Register</a>
+          </li>
+
+              <li>
+
+            <a>  <div class="text-center" id="google_translate_element"></div> </a>
+
           </li>
 
         </ul>
@@ -113,22 +164,13 @@
     <img style="margin-left:-35.5%;" height="900" width="1920"  src="{{url_for('static', filename='dist/img/aml.jpg')}}" />
 <div class="top-left"><strong  style=" font-family:Times New Roman, Times, serif; color:white; font-size:310%; text-align: center; margin-left:-7%;  text-shadow: 2px 2px 4px #000000;x"> SMI Anti-Money Laundering
 Monitor Suspicious Activity Make Fast Decisions And Stay In Compliance</strong></div>
-<!-- /.content -->
-    </div>
-    <!-- /.container -->
-  <!-- /.content-wrapper
 
-  <footer class="main-footer">
-    <div class="container">
-      <div class="pull-right hidden-xs">
-      </div>
     </div>
 
-  </footer>-->
 </div>
 <!-- ./wrapper -->
 
-<!-- jQuery 3 -->
+
 
 
 <script>
@@ -148,5 +190,8 @@ Monitor Suspicious Activity Make Fast Decisions And Stay In Compliance</strong><
 <script>
     location.href = Flask.url_for('dist/js/adminlte.min.js', {});
 </script>
+
+
+
 </body>
 </html>

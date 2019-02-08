@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect
 from flaskext.mysql import MySQL
 from forms import RegistrationForm , LoginForm
-
+from DBconnection import connection2
 
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ mysql.init_app(app)
 
 conn = mysql.connect()
 cursor = conn.cursor()
-cursor1 = conn.cursor()
+
 
 
 
@@ -27,14 +27,25 @@ def home():
 
 
 
-@app.route("/TestRegister", methods=['GET', 'POST'])
-def testRegister():
-    form = RegistrationForm()
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!','success')
-        return redirect(url_for('home'))
+        if form.username.data == 'admin' and form.password.data == 'password':
+            flash(f'Welcome back {form.username.data}', 'success')
+            return redirect(url_for('bankP'))
+        else:
+            flash('Login Unsuccessful, Please check username and password','danger')
 
-    return render_template('TestRegister.html', title ='Register', form = form)
+    return render_template('login.html', form=form)
+
+'''
+@app.route('/logout')
+def logout():
+   # remove the username from the session if it is there
+   session.pop('username', None)
+   return redirect(url_for('index'))
+'''
 
 
 
@@ -42,58 +53,38 @@ def testRegister():
 
 @app.route("/Register", methods=['GET', 'POST'])
 def register():
-  ''' fullName = request.form['name']
-    userName = request.form['username']
-    #bankName = request.form['bankName']
-    email = request.form['email']
-    confirmEmail = request.form['confirmEmail']
-    password = request.form['password']
-    confirmPass = request.form['confirmPassword']
-
-    #Checking If the account(user_name) is already registered.
-    cursor.execute("SELECT * FROM AMLOfficer WHERE userName = '"+userName+"'")
-    data = cursor.fetchone()
-
-    if not(data is None):
-        return render_template('Register.html', error='This Username is already registered')
-
-    # Checking If the account(email) is already registered.
-    cursor.execute("SELECT * FROM AMLOfficer WHERE email = '" + email + "'")
-    data = cursor.fetchone()
-
-    if not (data is None):
-        return 'This Email is already registered'
-
-    return 'Working'   '''
   form = RegistrationForm()
   if form.validate_on_submit():
-      flash(f'Account created for {form.username.data} Successfully !', 'success')
+      # Checking If the account(user_name) is already registered.
+      cursor.execute("SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "'")
+      data1 = cursor.fetchone()
+
+      # Checking If the account(email) is already registered.
+      cursor.execute("SELECT * FROM AMLOfficer WHERE email = '" + form.email.data + "'")
+      data2 = cursor.fetchone()
+      if not (data1 is None):
+          flash('This Username is already registered please try another username', 'danger')
+          return render_template('Register.html', form=form)
+      elif not (data2 is None):
+          flash('This Email is already registered please try another email', 'danger')
+          return render_template('Register.html', form=form)
+      else:
+          cur, db = connection2()
+          query = "INSERT INTO AMLOfficer (userName, email, fullname, password, bank_id ) VALUES(%s,%s,%s,%s,%s)"
+          val = (form.username.data, form.email.data, form.fullName.data, form.password.data, 1)
+          cur.execute(query, val)
+          db.commit()
+          cur.close()
+          db.close()
+          flash(f'Account created for {form.username.data} Successfully !', 'success')
       return redirect(url_for('bankP'))
 
-  return render_template('new.html', form=form)
+  return render_template('Register.html', form=form)
 
 
 
 
-'''@app.route("/login")
-def login():
-    form = LoginForm()
-    return render_template('login.html', form=form)'''
 
-
-#AMLOfficer Login
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        if form.username.data == 'admin' and form.password.data == 'password':
-            flash(f'You have been logged in!!', 'success')
-            return redirect(url_for('bankP'))
-        else:
-            flash('Login Unsuccessful, Please check username and password','danger')
-
-    return render_template('login.html', form=form)
 
 
 @app.route("/bankProfile")
@@ -103,6 +94,11 @@ def bankP():
 @app.route("/ManageProfile")
 def manageProfile():
     return render_template("ManageProfile.html")
+
+
+@app.route("/test")
+def translate():
+    return render_template("test.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
