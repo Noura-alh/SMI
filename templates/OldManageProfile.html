@@ -3,18 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> SMI | Manage Bank Data</title>
+  <title> SMI | Manage Profile</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-       <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
   <!-- Font Awesome -->
-    <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+     <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
   <!-- Theme style -->
-      <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
+
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-      <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,7 +32,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<div class="wrapper"  >
 
   <header class="main-header">
     <!-- Logo -->
@@ -112,10 +117,6 @@
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
-
-
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
@@ -162,7 +163,6 @@
             </span>
           </a>
         </li>
-
         <li>
           <a href="OldManageProfile.html">
           <span>Manage Profile</span>
@@ -192,6 +192,7 @@
           </a>
         </li>
 
+
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -199,113 +200,114 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Manage Bank Data
+    <div class="container">
 
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="home.html"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="bankProfile.html">Profile</a></li>
-        <li class="active">Manage Bank Data</li>
-      </ol>
-    </section>
-</br>
-    <!-- Main content -->
-    <section class="content">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-8">
-          <!-- general form elements -->
-          <div class="box box-default" style="margin-left:25%;">
-            <div class="box-header with-border">
-              <h3 class="box-title">Manage Bank Data</h3>
+      <section class="content-header">
+
+        <ol class="breadcrumb">
+          <li><a href="home.html"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="bankProfile.html">Profile</a></li>
+          <li class="active">Manage Profile</li>
+        </ol>
+      </section>
+
+    <h1>Manage Profile</h1>
+	<div class="row">
+      <!-- left column -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <img src="../../dist/img/Riyadh.png" class="avatar img-circle" alt="avatar" width="70" height="80">
+          <h6>Upload a photo</h6>
+
+          <input type="file" class="form-control">
+        </div>
+      </div>
+
+      <!-- edit form column -->
+
+      <div class="col-md-9 personal-info">
+        <h3 style="color:#004D40;"> <b> Personal info</b></h3>
+
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">First name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Sara">
             </div>
-            <!-- /.box-header -->
-            <!-- form start -->
-</br>
-            <form role="form">
-              <div class="box-body">
-                <div class="form-group">
-                  <label for="exampleInputFile">Upload Business Rules</label>
-                  <input type="file" id="exampleInputFile">
-                  <p class="help-block">file extention, .xml</p>
-                  <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount1()">Delete</button>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">Last name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Sami">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">Bank Name:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Riyadh Bank">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label" style="text-align:left;">AML Officer Email:</label>
+            <div class="col-lg-8">
+              <input class="form-control" type="text" value="Saraemail@gmail.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Username:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" value="Sarauser">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label" style="text-align:left;">Confirm password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" value="11111122333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8" id="wrapperH">
+              <input type="button" class="btn btn-primary"value="Save Changes" onclick="deleteAccount1()">
 
-                </br>
-                <hr>
+              <input type="reset" class="btn btn-default" value="Cancel" class="btn btn-primary">
+            </div>
+            <script>
+            function deleteAccount1(){
+            confirm("Are you sure you want to save changes?");
+              }
+          </script>
 
-
-                      <div class="form-group">
-                        <label for="exampleInputFile">Upload Bank Accounts</label>
-                        <input type="file" id="exampleInputFile">
-
-                        <p class="help-block">file extention, .xls .xlt .xlsm .xlsxm</p>
-                        <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount2()">Delete</button>
-
-                      </div>
-                    <hr>
-                      <Button class="btn btn-default" value="Submit" style="margin-left:42%; width:20%; tect-align:center;">Submit</button>
-
-                      <script>
-                      function deleteAccount1(){
-                      confirm("Are you sure you want to delete bank Business rules?");
-                        }
+          </br></br></br> </br>
+            <div style="margin-left:48%;">
+                <input type="button" class="btn btn-primary"value="Delte Profile" onclick="deleteAccount()" style="background-color:#A10303; width:39%;">
+                <script>
+                function deleteAccount(){
+                confirm("Are you sure you want to delete profile?");
+                  }
               </script>
 
-              <script>
-              function deleteAccount2(){
-              confirm("Are you sure you want to delete bank accounts?");
-                }
-      </script>
-
-
-                    <!-- /.box-body -->
-
-
-
-                </div>
-              </div>
-              <!-- /.box-body -->
-            </form>
-
-        </div>
-          <!-- /.box -->
-        </div>
-        <!--/.col (left) -->
-        <!-- right column -->
-
-
-        <!--/.col (right) -->
-
-
+            </div>
+          </div>
+        </form>
       </div>
-      <!-- /.row -->
-      <!-- Content Wrapper. Contains page content -->
-
-
-
-
-
-
-    </section>
-    <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
+</div>
+  </div>
 
 
 
-  <footer class="main-footer">
-
-  </footer>
-
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
+
+<!-- jQuery 3 -->
 
 <script>
     location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
@@ -327,6 +329,8 @@
 <script>
     location.href = Flask.url_for('dist/js/adminlte.min.js', {});
 </script>
+
+
 
 </body>
 </html>

@@ -3,18 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> SMI | Manage Bank Data</title>
+  <title> SMI | Client Profile</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-       <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
   <!-- Font Awesome -->
-    <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
   <!-- Theme style -->
-      <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
+
+  <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-      <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,16 +34,16 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<div class="wrapper"  >
 
   <header class="main-header">
     <!-- Logo -->
     <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
 
-      <span class="logo-mini"  ><img  height="45" width="38" src="../../dist/img/slogo.png" alt="User Image"></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">  <img  height="42" width="130" src="../../dist/img/newlogo.png" alt="User Image"></span>
+    <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -80,13 +87,13 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="../../dist/img/Riyadh1.png" class="user-image" alt="User Image">
+              <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
               <span class="hidden-xs">Sarah Sami</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="../../dist/img/Riyadh1.png" class="img-circle" alt="User Image">
+                <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
                 <p>
                   Sarah Sami
@@ -112,17 +119,13 @@
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
-
-
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="../../dist/img/Riyadh.png" class="img-circle" alt="User Image">
+          <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p>Sarah Sami</p>
@@ -155,16 +158,15 @@
 
 
         <li>
-          <a href="home.html">
+          <a href="{{ url_for('home') }}">
             <i class="fa fa-home"></i> <span>Home</span>
             <span class="pull-right-container">
 
             </span>
           </a>
         </li>
-
         <li>
-          <a href="OldManageProfile.html">
+          <a href="{{ url_for('manageProfile') }}">
           <span>Manage Profile</span>
             <span class="pull-right-container">
 
@@ -174,13 +176,23 @@
 
 
         <li>
-          <a href="ManageBankData.html">
+          <a href="{{ url_for('manageBankData') }}">
           <span>Manage Bank Data</span>
             <span class="pull-right-container">
 
             </span>
           </a>
         </li>
+
+            <li>
+          <a href="{{ url_for('DatabaseSetup') }}">
+          <span>Database Setup</span>
+            <span class="pull-right-container">
+
+            </span>
+          </a>
+        </li>
+
 
 
         <li>
@@ -192,6 +204,7 @@
           </a>
         </li>
 
+
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -199,106 +212,103 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Manage Bank Data
+      {% with messages = get_flashed_messages(with_categories=true) %}
 
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="home.html"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="bankProfile.html">Profile</a></li>
-        <li class="active">Manage Bank Data</li>
-      </ol>
-    </section>
-</br>
-    <!-- Main content -->
-    <section class="content">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-8">
-          <!-- general form elements -->
-          <div class="box box-default" style="margin-left:25%;">
-            <div class="box-header with-border">
-              <h3 class="box-title">Manage Bank Data</h3>
-            </div>
-            <!-- /.box-header -->
-            <!-- form start -->
-</br>
-            <form role="form">
-              <div class="box-body">
-                <div class="form-group">
-                  <label for="exampleInputFile">Upload Business Rules</label>
-                  <input type="file" id="exampleInputFile">
-                  <p class="help-block">file extention, .xml</p>
-                  <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount1()">Delete</button>
-
-                </br>
-                <hr>
-
-
-                      <div class="form-group">
-                        <label for="exampleInputFile">Upload Bank Accounts</label>
-                        <input type="file" id="exampleInputFile">
-
-                        <p class="help-block">file extention, .xls .xlt .xlsm .xlsxm</p>
-                        <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount2()">Delete</button>
-
-                      </div>
-                    <hr>
-                      <Button class="btn btn-default" value="Submit" style="margin-left:42%; width:20%; tect-align:center;">Submit</button>
-
-                      <script>
-                      function deleteAccount1(){
-                      confirm("Are you sure you want to delete bank Business rules?");
-                        }
-              </script>
-
-              <script>
-              function deleteAccount2(){
-              confirm("Are you sure you want to delete bank accounts?");
-                }
-      </script>
-
-
-                    <!-- /.box-body -->
-
-
-
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
                 </div>
-              </div>
-              <!-- /.box-body -->
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+
+      <section class="content-header">
+
+        <ol class="breadcrumb">
+          <li><a href="{{url_for('home')}}"><i class="fa fa-home"></i>Home</a></li>
+            <li><a href="{{ url_for('bankP') }}">Profile</a></li>
+          <li><a href="searchResult.html">Search Result</a></li>
+          <li class="active">Client Profile</li>
+        </ol>
+      </section>
+
+    <h1>Client Profile</h1>
+	<div class="row">
+    <div class="col-md-7">
+      <div class="box box-default" style="margin-left:10%;">
+        <form action="" methods="posts">
+        <div class="box-body box-profile">
+
+          <h3> <label class="label label-danger" class="profile-username text-center">High</label>&nbsp; {{ clientForm.clientName.data }}</h3>
+
+
+        </br>
+
+          <ul class="list-group list-group-unbordered">
+            <li class="list-group-item">
+              <b>{{ clientForm.clientID.label() }}</b> <p class="pull-right">{{clientForm.clientID.data}}</p>
+            </li>
+            <li class="list-group-item">
+              <b>{{ clientForm.clientSalary.label() }}</b> <p class="pull-right">{{clientForm.clientSalary.data}}</p>
+            </li>
+
+          </ul>
+        <!-- /.box-body -->
+      </div>
+
+     </form>
+
+
+            <form>
+          <li class="list-group-item">
+              <b>{{oldCommentForm.PrecommentContent.label()}}</b> <p>{{oldCommentForm.PrecommentContent.data}}</p>
+              <b>{{oldCommentForm.PrecommentDate.label()}}</b>
+              <p>{{oldCommentForm.PrecommentDate.data}}</p>
+              {{ oldCommentForm.delete(class="btn btn-default") }}
+          </li>
             </form>
 
+          <form>
+                     <div class="box-header with-border">
+
+          <h3 class="box-title">Add comment</h3>
+        <div class="box-body">
+          <div class="form-group">
+                    {% if commentForm.commentBody.errors %}
+                        {{ commentForm.commentBody(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in commentForm.commentBody.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ commentForm.commentBody(class="form-control form-control-lg") }}
+                    {% endif %}
+          </div>
         </div>
-          <!-- /.box -->
-        </div>
-        <!--/.col (left) -->
-        <!-- right column -->
-
-
-        <!--/.col (right) -->
-
-
+      </ul>
+      <div class="box-footer">
+      <div class="pull-right">
+           {{ commentForm.submit(class="btn btn-default") }}
       </div>
-      <!-- /.row -->
-      <!-- Content Wrapper. Contains page content -->
-
-
-
-
-
-
-    </section>
-    <!-- /.content -->
+      </div>
+    </div>
+          </form>
   </div>
+</div>
+  </div>
+
+
+
   <!-- /.content-wrapper -->
+  <!--  <footer class="main-footer">
 
-
-
-  <footer class="main-footer">
-
-  </footer>
+  </footer>-->
 
   <!-- /.control-sidebar -->
   <!-- Add the sidebar's background. This div must be placed
@@ -307,26 +317,22 @@
 </div>
 <!-- ./wrapper -->
 
-<script>
-    location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
-</script>
-<!-- Bootstrap 3.3.7 -->
+<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
-<script>
-    location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
-</script>
 
-<!-- Slimscroll -->
 
-<script>
-    location.href = Flask.url_for('bower_components/jquery-slimscroll/jquery.slimscroll.min.js', {});
-</script>
+<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-<!-- AdminLTE App -->
 
-<script>
-    location.href = Flask.url_for('dist/js/adminlte.min.js', {});
-</script>
+
+<script src="{{ url_for('static', filename='bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+
+
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+
+  </div>
+</div>
 
 </body>
 </html>
