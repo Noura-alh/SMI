@@ -28,6 +28,76 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 
+    <!-- Google Translate Element begin -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', includedLanguages: 'en,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style type="text/css">
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
+        div#google_translate_element div.goog-te-gadget-simple {
+            border: none;
+            background-color: transparent;
+            /*background-color: #17548d;*/ /*#e3e3ff*/
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
+            text-decoration: none;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
+            color: #aaa;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
+            color: white;
+        }
+
+        .goog-te-gadget-icon {
+            display: none !important;
+            /*background: url("url for the icon") 0 0 no-repeat !important;*/
+        }
+
+        /* Remove the down arrow */
+        /* when dropdown open */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
+            display: none;
+        }
+        /* after clicked/touched */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(118, 118, 118);"] {
+            display: none;
+        }
+        /* on page load (not yet touched or clicked) */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
+            display: none;
+        }
+
+        /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
+            display: none;
+        }
+        /* Remove span with left border line | (next to the arrow) in Edge & IE11 */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left-color: rgb(187, 187, 187); border-left-width: 1px; border-left-style: solid;"] {
+            display: none;
+        }
+        /* HIDE the google translate toolbar */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */
+    </style>
+               <!-- End Translation code -->
+
+
+
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -110,9 +180,14 @@
                   </ul>
                 </li>
                 <!-- Control Sidebar Toggle Button -->
+                      <li>
+                     <a> <div class="text-center" id="google_translate_element"></div></a>
+                 </li>
+
                 <li>
                   <a href="{{ url_for('logout') }}"><i class="fa fa-sign-out"></i></a>
                 </li>
+
               </ul>
             </div>
           </nav>
@@ -243,12 +318,12 @@
 
             <li class="list-group-item">
               <b>AML Officer Name</b>
-              <p class="pull-right">{{ session['username'] }}</p>
+              <p class="pull-right">{{session['username']}}</p>
             </li>
 
             <li class="list-group-item">
               <b>AML Officer Email</b>
-              <p class="pull-right">{{ session['email'] }}</p>
+              <p class="pull-right">{{session['email']}}</p>
             </li>
 
           </ul>

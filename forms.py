@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 class RegistrationForm(FlaskForm):
    fullName = StringField('Full Name', validators=[DataRequired()])
    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+   bankName = StringField('Bank Name', validators=[DataRequired()])
    email = StringField('Email', validators= [DataRequired(), Email()])
    password = PasswordField('Password', validators= [DataRequired(), Length(min=8)])
    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
@@ -50,6 +51,15 @@ class oldCommentForm(FlaskForm):
 class newCommentForm(FlaskForm):
    commentBody = TextAreaField('Add Comment', validators=[DataRequired()], render_kw={"rows": 5, "cols": 11})
    submit = SubmitField('Add Comment')
+
+
+class dbSetupForm(FlaskForm):
+   db_user = StringField('Database User: ', validators=[DataRequired()])
+   db_pass = PasswordField('Database Password: ', validators= [DataRequired()])
+   db_name = StringField('Database Name: ', validators=[DataRequired()])
+   db_host = StringField('Database Host: ', validators=[DataRequired()])
+   submit = SubmitField('Connect')
+
 
 
 

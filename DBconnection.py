@@ -30,4 +30,23 @@ def connection2():
     return cur, db
 
 
+def BankConnection(host_name,user_name,password,db_name):
+
+    status=0
+    cur = ""
+    db = ""
+    try:
+        db = mysql.connector.connect(host=host_name,
+                                     user=user_name,
+                                     passwd=password,
+                                     db=db_name)
+        cur = db.cursor()
+
+    except Exception as e:
+        status =1
+
+
+    return status, cur , db
+
+
 

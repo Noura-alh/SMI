@@ -32,6 +32,81 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 
+                 <!-- Start Translation code -->
+
+              <!-- This line adds jquery to the page, otherwise the script tags at the bottom will not run -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Google Translate Element begin -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', includedLanguages: 'en,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <style type="text/css">
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
+        div#google_translate_element div.goog-te-gadget-simple {
+            border: none;
+            background-color: transparent;
+            /*background-color: #17548d;*/ /*#e3e3ff*/
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
+            text-decoration: none;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
+            color: #aaa;
+        }
+
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
+            color: white;
+        }
+
+        .goog-te-gadget-icon {
+            display: none !important;
+            /*background: url("url for the icon") 0 0 no-repeat !important;*/
+        }
+
+        /* Remove the down arrow */
+        /* when dropdown open */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
+            display: none;
+        }
+        /* after clicked/touched */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(118, 118, 118);"] {
+            display: none;
+        }
+        /* on page load (not yet touched or clicked) */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
+            display: none;
+        }
+
+        /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
+            display: none;
+        }
+        /* Remove span with left border line | (next to the arrow) in Edge & IE11 */
+        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left-color: rgb(187, 187, 187); border-left-width: 1px; border-left-style: solid;"] {
+            display: none;
+        }
+        /* HIDE the google translate toolbar */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */
+    </style>
+               <!-- End Translation code -->
+
+
+
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
@@ -114,9 +189,13 @@
             </ul>
           </li>
           <!-- Control Sidebar Toggle Button -->
-          <li>
-            <a href="#"><i class="fa fa-sign-out"></i></a>
-          </li>
+              <li>
+                     <a> <div class="text-center" id="google_translate_element"></div> </a>
+                 </li>
+
+                <li>
+                  <a href="{{ url_for('logout') }}"><i class="fa fa-sign-out"></i></a>
+                </li>
         </ul>
       </div>
     </nav>
@@ -206,6 +285,20 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
+
     <div class="container">
 
       <section class="content-header">
@@ -226,36 +319,75 @@
       <div class="col-md-9 personal-info">
         <h3 style="color:#004D40;"> <b>Database info</b></h3>
 
-        <form class="form-horizontal" role="form">
+        <form action="" method="post" class="form-horizontal" role="form">
+            {{form.hidden_tag()}}
+
           <div class="form-group">
-            <label class="col-lg-3 control-label" style="text-align:left;">Database User:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="text" value="root">
+              {{form.db_user.label(class="col-lg-3 control-label",style="text-align:left;")}}
+                {% if form.db_user.errors %}
+                        {{ form.db_user(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.db_user.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                     <div class="col-lg-8">
+                        {{ form.db_user(class="form-control") }}
+                    </div>
+                    {% endif %}
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label" style="text-align:left;">Database Password:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="text" value="123456789">
+              <div class="form-group">
+              {{form.db_pass.label(class="col-lg-3 control-label",style="text-align:left;")}}
+                {% if form.db_pass.errors %}
+                        {{ form.db_pass(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.db_pass.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                     <div class="col-lg-8">
+                        {{ form.db_pass(class="form-control") }}
+                    </div>
+                    {% endif %}
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label" style="text-align:left;">Datbase Name:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="text" value="SMI_DB">
+            <div class="form-group">
+              {{form.db_name.label(class="col-lg-3 control-label",style="text-align:left;")}}
+                {% if form.db_name.errors %}
+                        {{ form.db_name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.db_name.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                     <div class="col-lg-8">
+                        {{ form.db_name(class="form-control") }}
+                    </div>
+                    {% endif %}
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label" style="text-align:left;">Database Host:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="text" value="LocalHost">
+            <div class="form-group">
+              {{form.db_host.label(class="col-lg-3 control-label",style="text-align:left;")}}
+                {% if form.db_host.errors %}
+                        {{ form.db_host(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.db_host.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                     <div class="col-lg-8">
+                        {{ form.db_host(class="form-control") }}
+                    </div>
+                    {% endif %}
             </div>
-          </div>
+
 
           <div class="form-group">
             <label class="col-md-3 control-label"></label>
             <div class="col-md-8" id="wrapperH">
-              <input type="button" class="btn btn-primary"value="Save Changes">
+                 {{ form.submit(class="btn btn-primary") }}
             </div>
 
           </div>
@@ -265,18 +397,6 @@
 </div>
   </div>
 
-
-
-  <!-- /.content-wrapper -->
-  <!--  <footer class="main-footer">
-
-  </footer>-->
-
-  <!-- Control Sidebar -->
-
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->

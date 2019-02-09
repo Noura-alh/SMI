@@ -1,8 +1,9 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session
 from flaskext.mysql import MySQL
-from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm
-from DBconnection import connection2
+from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm
+from DBconnection import connection2, BankConnection
 from passwordRecovery import passwordRecovery
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'af6695d867da3c7d125a99f5c17ea79a'
@@ -83,7 +84,7 @@ def register():
             cur.close()
             db.close()
             session["username"] = form.username.data
-            session["email"] = form.email.data
+            session['email'] = form.email.data
             flash(f'Account created for {session["username"]} Successfully !', 'success')
         return redirect(url_for('bankP'))
 
@@ -144,15 +145,7 @@ def manageBankData():
 
 
 
-@app.route("/DatabaseSetup")
-def DatabaseSetup():
-    # Only logged in users can access bank profile
-    if session.get('username') == None:
-        return redirect(url_for('home'))
-
-    return render_template("databaseSetup.html")
-
-@app.route("/clientProfile")
+@app.route("/clientProfile", methods=['GET', 'POST'])
 def clientProfile():
     client_form = clientForm()
     new_comment = newCommentForm()
@@ -178,11 +171,22 @@ def clientProfile():
     cur.execute(query)
     record = cur.fetchall()
     if not (record is None) :
+        for column in record:
+            old_comment.PrecommentDate.data = column[2] #comment date
+            old_comment.PrecommentContent.data = column[1] #comment body
+        return render_template("clientProfile.html", clientForm=client_form, commentForm=new_comment,
+                               oldCommentForm=old_comment)
+    if new_comment.validate_on_submit():
+        date_now = datetime.now()
+        formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
+        query = "INSERT INTO SMI_DB.Comment (commentBody, commentDate, clientID, officerName ) VALUES(%s,%s,%s,%s)"
+        val = (new_comment.commentBody.data, formatted_date, formatted_date, 1, session['username'])
+        cur.execute(query, val)
+        db.commit()
+        cur.close()
+        db.close()
 
-
-
-
-    return render_template("clientProfile.html", clientForm = client_form, commentForm = new_comment, oldCommentForm =old_comment)
+    return render_template("clientProfile.html", clientForm = client_form, commentForm = new_comment)
 
 
 '''@app.route("/addComment")
@@ -190,6 +194,23 @@ def comment():
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))'''
+
+@app.route("/DatabaseSetup", methods=['GET', 'POST'])
+def DatabaseSetup():
+    # Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+    form = dbSetupForm()
+    if form.validate_on_submit():
+        status, cur, db = BankConnection(form.db_host.data,form.db_user.data,form.db_pass.data,form.db_name.data)
+        if status == 1 :
+            flash('Unable to connect please try again..', 'danger')
+            return render_template("databaseSetup.html", form=form)
+        else :
+            flash('Successfully connected to the database..', 'success')
+            return render_template("databaseSetup.html", form=form)
+
+    return render_template("databaseSetup.html", form = form)
 
 
 
