@@ -2,8 +2,7 @@ from flask import Flask, redirect, render_template, request, session, abort, url
 from flaskext.mysql import MySQL
 from forms import RegistrationForm , LoginForm, forgotPassForm
 from DBconnection import connection2
-
-
+from passwordRecovery import passwordRecovery
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'af6695d867da3c7d125a99f5c17ea79a'
@@ -38,7 +37,7 @@ def login():
         query = "SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "' AND password = '" + form.password.data + "' "
         cur.execute(query)
         data1 = cur.fetchone()
-        if not (data1 is None):
+        if data1 is None:
             flash('Invalid username or password please try again', 'danger')
             return render_template('Register.html', form=form)
         else:
@@ -111,7 +110,13 @@ def forgotPass():
         cur.execute(query)
         data1 = cur.fetchone()
         if (data1 is None):
-            flash('Invalid Email', 'danger')
+            flash('This email is not registered in our system ', 'danger')
+            return render_template('forgotPassword.html', form=form)
+        else:
+            a = passwordRecovery(form.email.data)
+            a.sendEmail()
+
+            flash('A recovery password has been sent to your email', 'success')
             return render_template('forgotPassword.html', form=form)
 
 
@@ -123,7 +128,13 @@ def forgotPass():
 
 @app.route("/bankProfile")
 def bankP():
+
+    #Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+
     return render_template("bankProfile.html")
+
 
 @app.route("/ManageProfile")
 def manageProfile():

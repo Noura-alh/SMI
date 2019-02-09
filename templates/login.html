@@ -26,7 +26,8 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <style>
+
+    <style>
   .container {
       position: relative;
       text-align: center;
@@ -213,7 +214,7 @@
                         {{ form.username(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.username.errors %}
-                                <span>{{ error }}</span>
+                                <span style="color: red;">{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
@@ -228,7 +229,7 @@
                         {{ form.password(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
+                                <span style="color: red;">{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
