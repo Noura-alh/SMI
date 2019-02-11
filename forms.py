@@ -24,7 +24,7 @@ class forgotPassForm(FlaskForm):
 
 
 class bankProfileForm(FlaskForm):
-   fullName = StringField('Full Name', validators=[DataRequired()])
+   fullName = StringField('Full Name', validators=[DataRequired(), Length(min=2)])
    bankName = StringField('Bank Name', validators=[DataRequired()])
    email = StringField('AML Officer Email', validators=[DataRequired(), Email()])
    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
