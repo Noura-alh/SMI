@@ -212,6 +212,15 @@ def DatabaseSetup():
 
     return render_template("databaseSetup.html", form = form)
 
+@app.route("/Report", methods=['GET', 'POST'])
+def Report():
+    # Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+
+
+    return render_template("email.html")
+
 
 
 
