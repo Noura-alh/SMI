@@ -24,7 +24,9 @@ def connection2():
     db = mysql.connector.connect(host="localhost",
                                  user="root",
                                  passwd="SMIhmwn19*",
-                                 db="SMI_DB")
+                                 db="SMI_DB",
+                                 autocommit=True
+                                 )
     cur = db.cursor()
 
     return cur, db

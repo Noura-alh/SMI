@@ -30,7 +30,7 @@ def login():
 
         # Check id user exisit in the database
         cur, db = connection2()
-        query = "SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "' AND password = '" + form.password.data + "' "
+        '''query = "SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "' AND password = '" + form.password.data + "' "
         cur.execute(query)
         data1 = cur.fetchone()
         if data1 is None:
@@ -44,6 +44,41 @@ def login():
             session["email"] = useremail
             flash(f'Welcome back {form.username.data}', 'success')
             return redirect(url_for('bankP'))
+        db.commit()
+        cur.close()
+        db.close()'''
+        cur.execute("SELECT COUNT(1) FROM AMLOfficer WHERE userName = %s;", [form.username.data])  # CHECKS IF USERNAME EXSIST
+        if cur.fetchone()[0]:
+            cur.execute("SELECT password FROM AMLOfficer WHERE userName = %s;", [form.username.data])  # FETCH THE HASHED PASSWORD
+            for row in cur.fetchall():
+                if form.password.data == row[0]:
+                    session['username'] = form.username.data
+                    query2 = "SELECT email FROM AMLOfficer WHERE userName = '" + form.username.data + "'"
+                    cur.execute(query2)
+                    useremail = cur.fetchone()
+                    session["email"] = useremail
+                    cursor.execute("UPDATE SMI_DB.AMLOfficer SET numOfFailedLogin=%s WHERE userName='%s' " % (0, form.username.data))
+                    #db.commit()
+                    cur.close()
+                    db.close()
+                    #query3 =
+                    #cur.execute("UPDATE `AMLOfficer` SET `numOfFailedLogin`=0 WHERE `userName`= '" + form.username.data + "'" ) #SET NUMBER OF TRIES
+                    #sql3 = "UPDATE AMLOfficer SET numOfFailedLogin = 0 WHERE userName = 'noura'"
+                    #val3 = (form.username.data)
+
+
+
+                    #mydb.commit()
+                    #
+                    flash(f'Welcome back {form.username.data}', 'success')
+                    return redirect(url_for('bankP'))
+
+
+                else:
+                    flash('Wrong Password try again!', 'danger')
+
+        else:
+            flash('Invalid Username try again!', 'danger')
         db.commit()
         cur.close()
         db.close()
