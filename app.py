@@ -57,31 +57,31 @@ def login():
                     cur.execute(query2)
                     useremail = cur.fetchone()
                     session["email"] = useremail
-                    cursor.execute("UPDATE SMI_DB.AMLOfficer SET numOfFailedLogin=%s WHERE userName='%s' " % (0, form.username.data))
-                    #db.commit()
-                    cur.close()
-                    db.close()
-                    #query3 =
-                    #cur.execute("UPDATE `AMLOfficer` SET `numOfFailedLogin`=0 WHERE `userName`= '" + form.username.data + "'" ) #SET NUMBER OF TRIES
-                    #sql3 = "UPDATE AMLOfficer SET numOfFailedLogin = 0 WHERE userName = 'noura'"
-                    #val3 = (form.username.data)
-
-
-
-                    #mydb.commit()
-                    #
+                    cur.execute("UPDATE SMI_DB.AMLOfficer SET numOfFailedLogin=%s WHERE userName='%s' " % (0, form.username.data)) #SUCCESSFUL LOGIN SET #ofTries to zero
+                    db.commit()
                     flash(f'Welcome back {form.username.data}', 'success')
                     return redirect(url_for('bankP'))
 
 
                 else:
-                    flash('Wrong Password try again!', 'danger')
+                    cur.execute("SELECT numOfFailedLogin FROM AMLOfficer WHERE userName = %s;",[form.username.data])  # FETCH THE HASHED PASSWORD
+                    for row in cur.fetchall():
+                        if row[0]== 3:
+                            flash('Sorry You have entered your password 3 times wrong.. Enter your email for validation to reset your password', 'danger')
+                            return redirect(url_for('forgotPass'))
+
+
+
+                        else:
+                            cur.execute("UPDATE SMI_DB.AMLOfficer SET numOfFailedLogin= numOfFailedLogin+1 WHERE userName='%s' " % (form.username.data))  # SUCCESSFUL LOGIN SET #ofTries to zero
+                            db.commit()
+                            flash('Wrong Password try again!', 'danger')
 
         else:
             flash('Invalid Username try again!', 'danger')
-        db.commit()
-        cur.close()
-        db.close()
+            db.commit()
+            cur.close()
+            db.close()
     return render_template('login.html', form=form)
 
 

@@ -25,8 +25,7 @@ def connection2():
                                  user="root",
                                  passwd="SMIhmwn19*",
                                  db="SMI_DB",
-                                 autocommit=True
-                                 )
+                                 autocommit=True)
     cur = db.cursor()
 
     return cur, db
