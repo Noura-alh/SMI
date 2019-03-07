@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for
 from flaskext.mysql import MySQL
 import mysql.connector
+import configparser
 
 
 
@@ -31,16 +32,21 @@ def connection2():
     return cur, db
 
 
-def BankConnection(host_name,user_name,password,db_name):
+def BankConnection():
 
     status=0
     cur = ""
     db = ""
+
+    config = configparser.ConfigParser()
+    config.read('credentials.ini')
+
+
     try:
-        db = mysql.connector.connect(host=host_name,
-                                     user=user_name,
-                                     passwd=password,
-                                     db=db_name)
+        db = mysql.connector.connect(host=config['DB_credentials']['host'],
+                                     user=config['DB_credentials']['user'],
+                                     passwd=config['DB_credentials']['passwd'],
+                                     db=config['DB_credentials']['db'])
         cur = db.cursor()
 
     except Exception as e:

@@ -44,7 +44,8 @@ class GeneralSearch:
         except Exception as e:
             print(str(e))
 
-
+        a.twitter_search()
+        a.google_search()
 
     def twitter_search(self):
 
@@ -261,6 +262,4 @@ class GeneralSearch:
 
 
 a = GeneralSearch('"حجاج العجمي"')
-#a.twitter_search()
-a.google_search()
 

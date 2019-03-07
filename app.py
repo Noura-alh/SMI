@@ -4,6 +4,7 @@ from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, 
 from DBconnection import connection2, BankConnection
 from passwordRecovery import passwordRecovery
 from datetime import datetime
+import configparser
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'af6695d867da3c7d125a99f5c17ea79a'
@@ -237,13 +238,27 @@ def DatabaseSetup():
         return redirect(url_for('home'))
     form = dbSetupForm()
     if form.validate_on_submit():
-        status, cur, db = BankConnection(form.db_host.data,form.db_user.data,form.db_pass.data,form.db_name.data)
-        if status == 1 :
+
+
+        config = configparser.ConfigParser()
+        config['DB_credentials'] = {'host': form.db_host.data,
+                                    'user': form.db_user.data,
+                                    'passwd': form.db_pass.data,
+                                     'db': form.db_name.data}
+        with open('credentials.ini', 'w') as configfile:
+            config.write(configfile)
+        status, cur, db= BankConnection()
+        if status == 1:
             flash('Unable to connect please try again..', 'danger')
             return render_template("databaseSetup.html", form=form)
-        else :
+        else:
+            # Check if bussinse rule is uploaded
             flash('Successfully connected to the database..', 'success')
             return render_template("databaseSetup.html", form=form)
+
+
+
+
 
     return render_template("databaseSetup.html", form = form)
 

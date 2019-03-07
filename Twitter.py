@@ -1,8 +1,9 @@
 from searchtweets import load_credentials, ResultStream, gen_rule_payload, collect_results
 
-premium_search_args = load_credentials("./twitter_keys.yaml",
-                                       yaml_key="search_tweets_sandbox",
+premium_search_args = load_credentials("/twitter_keys.yaml",
+                                       yaml_key="search_tweets_premium_example",
                                        env_overwrite=False)
+
 # Testing with sandbox
 
 rule = gen_rule_payload("حجاج العجمي",
@@ -19,7 +20,3 @@ f = open("result.txt", "w+")
 
 [print(tweet.all_text, end='\n\n') for tweet in tweets[0:50]];
 
-
-        for each in self.cleanText:
-            f.write(each+'\n')
-        f.close()

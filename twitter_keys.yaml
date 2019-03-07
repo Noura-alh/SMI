@@ -1,0 +1,14 @@
+search_tweets_api:
+  account_type: premium
+  endpoint: https://api.twitter.com/1.1/tweets/search/fullarchive/dev.json
+  consumer_key: d51IGnDlp7Aw58l4SnDufKop2
+  consumer_secret: 92rDpKfnLUR01y69gU7KFo5iCWCIVBZgLOCtxerfNq6dhfO8vZ
+
+search_tweets_premium:
+  account_type: premium
+  endpoint: https://api.twitter.com/1.1/tweets/search/30day/dev.json
+  # if you have a bearer token, you can use it below. otherwise, swap the comment marks and use
+  # your app's consumer key/secret - the library will generate and use a bearer token for you.
+  # bearer_token: <A_VERY_LONG_MAGIC_STRING>
+  consumer_key: d51IGnDlp7Aw58l4SnDufKop2
+  consumer_secret: 92rDpKfnLUR01y69gU7KFo5iCWCIVBZgLOCtxerfNq6dhfO8vZ
