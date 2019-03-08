@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, session, abort, url
 from flaskext.mysql import MySQL
 import mysql.connector
 import configparser
+from sqlalchemy import create_engine
 
 
 
@@ -49,11 +50,19 @@ def BankConnection():
                                      db=config['DB_credentials']['db'])
         cur = db.cursor()
 
+        engineParamter = 'mysql+mysqlconnector://' + config['DB_credentials']['user'] + ':' + config['DB_credentials']['passwd'] + '@' + config['DB_credentials']['host'] + '/' + config['DB_credentials']['db']
+        engine = create_engine(engineParamter)
+
     except Exception as e:
         status =1
 
 
-    return status, cur , db
+    return status, cur , db, engine
+
+def SMI_engine():
+    engine = create_engine("mysql+mysqlconnector://root:SMIhmwn19*@localhost/SMI_DB")
+
+    return engine
 
 
 

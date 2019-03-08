@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField, FloatField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField, FloatField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -35,7 +35,6 @@ class bankProfileForm(FlaskForm):
    cancel = SubmitField('Cancel')
 
 
-
 class clientForm(FlaskForm):
    clientName = StringField('Client Name')
    clientClass = IntegerField('client class')
@@ -59,6 +58,21 @@ class dbSetupForm(FlaskForm):
    db_name = StringField('Database Name: ', validators=[DataRequired()])
    db_host = StringField('Database Host: ', validators=[DataRequired()])
    submit = SubmitField('Connect')
+
+class reportCase(FlaskForm):
+   reciver = StringField('To:1 ', validators= [DataRequired(), Email()])
+   sender = StringField('From:1 ', validators= [DataRequired(), Email()])
+   subject = StringField('Sujbect:1 ', validators=[DataRequired()])
+   email_body = TextAreaField('Message:1 ', render_kw={"rows": 5, "cols": 11})
+   case_report = FileField('Upload Business Rules:1')
+   submit = SubmitField('Send')
+   #Report file:
+
+
+class ViewCasesForm(FlaskForm):
+   submit = SubmitField('View Case')
+
+
 
 
 

@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session
 from flaskext.mysql import MySQL
-from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm
+from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm,reportCase,ViewCasesForm
 from DBconnection import connection2, BankConnection
 from passwordRecovery import passwordRecovery
 from datetime import datetime
@@ -247,7 +247,7 @@ def DatabaseSetup():
                                      'db': form.db_name.data}
         with open('credentials.ini', 'w') as configfile:
             config.write(configfile)
-        status, cur, db= BankConnection()
+        status, cur, db, engine= BankConnection()
         if status == 1:
             flash('Unable to connect please try again..', 'danger')
             return render_template("databaseSetup.html", form=form)
@@ -267,9 +267,38 @@ def Report():
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
+    form = reportCase()
+    if not(form.validate_on_submit()):
+        return render_template("email.html", form=form)
+
+        '''flash('Successfully connected to the database..', 'success')
+        return render_template("databaseSetup.html", form=form)
+
+    else:
+        flash('Unable to connect please try again..', 'danger')'''
 
 
-    return render_template("email.html")
+
+    return render_template("email.html", form = form)
+
+@app.route("/Cases" , methods=['GET', 'POST'])
+def cases():
+    cur, db = connection2()
+    # Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+    else:
+        query = "SELECT * FROM SMI_DB.ClientCase "
+        cur.execute(query)
+        data = cur.fetchall()
+        form = ViewCasesForm()
+        if form.validate_on_submit():
+            print(form.submit)
+            id = request.form['submit'][-1]
+            return redirect((url_for('case' , id = id)))
+    return render_template("cases.html", data=data, form=form)
+
+
 
 
 

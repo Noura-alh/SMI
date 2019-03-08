@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> SMI | Report </title>
+  <title> SMI | View Cases</title>
   <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+     <!-- Bootstrap 3.3.7 -->
 
-  <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
   <!-- Font Awesome -->
 
@@ -18,7 +20,9 @@
 
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-   <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -31,14 +35,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<div class="wrapper"  >
 
- <header class="main-header">
+  <header class="main-header">
     <!-- Logo -->
     <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-
-   <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
+           <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
 
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
@@ -59,7 +62,7 @@
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">1</span>
+              <span class="label label-warning"></span>
             </a>
             <ul class="dropdown-menu">
               <li class="header">You have 1 notifications</li>
@@ -86,7 +89,7 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
-              <span class="hidden-xs">Sarah Sami</span>
+               <span class="hidden-xs">{{ session['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -117,10 +120,6 @@
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
-
-
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
@@ -193,168 +192,76 @@
     </section>
     <!-- /.sidebar -->
   </aside>
-
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                {{ message }}
-                </div>
-
-            {% endfor %}
-
-        {% endif %}
-    {% endwith %}
-
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Email
-
+       Cases
+      <!--  <small>preview of simple tables</small> -->
       </h1>
-      <ol class="breadcrumb">
+    <ol class="breadcrumb">
         <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
           <li><a href="{{ url_for('bankP') }}">Profile</a></li>
-        <li class="active">Email</li>
+        <li class="active">Cases</li>
       </ol>
     </section>
-</br>
-
 
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <!-- left column -->
-        <div class="col-md-8">
-          <!-- general form elements -->
-          <div class="box box-default" style="margin-left:25%;">
-            <div class="box-header with-border">
-              <h3 class="box-title">Report to MOI</h3>
+        <div class="col-md-6">
+
+
+
+        </div>
+        <!-- /.col -->
+        <div class="col-md-6">
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Cases</h3>
+
             </div>
             <!-- /.box-header -->
-            <!-- form start -->
-</br>
+            <div class="box-body table-responsive no-padding">
+             <form  action="{{ url_for('cases') }}" method="post" role="form">
+              {{ form.hidden_tag() }}
+              <table class="table table-hover">
+                <tr>
+                  <th>Case Id</th>
 
-                  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        <form action="{{ url_for('Report') }}" role="form" method="post" id="reused_form" enctype="multipart/form-data"  >
-            <div class="form-group">
-                   {{ form.reciver.label(class="form-control-label") }}
-                 {% if form.reciver.errors %}
-                        {{ form.reciver(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.reciver.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.reciver(class="form-control form-control-lg") }}
-                    {% endif %}
+                  <th>Action</th>
+
+                </tr>
+
+                <!-- tr problem -->
+                  {% for item in data %}
+                    <tr>
+                  <td>{{ item[0] }}</td>
+
+                    <td> {{ form.submit(class="btn btn-primary btn-sm"  , value = 'View Case '+ item[0]|string )}}</td>
+                    </tr>
+                  {% endfor %}
+              </table>
+
+             </form>
             </div>
-             <div class="form-group has-feedback">
-               {{ form.sender.label(class="form-control-label") }}
-                    {% if form.sender.errors %}
-                        {{ form.sender(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.sender.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.sender(class="form-control form-control-lg") }}
-                    {% endif %}
-
-            </div>
-              <div class="form-group">
-                {{ form.subject.label(class="form-control-label") }}
-                 {% if form.subject.errors %}
-                        {{ form.subject(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.subject.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.subject(class="form-control form-control-lg") }}
-                    {% endif %}
-
-            </div>
-
-            <div class="form-group">
-                 {{ form.email_body.label(class="form-control-label") }}
-                 {% if form.email_body.errors %}
-                        {{ form.email_body(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email_body.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email_body(class="form-control form-control-lg") }}
-                    {% endif %}
-            </div>
-
-                        <div class="form-group">
-                 {{ form.case_report.label(class="form-control-label") }}
-                 {% if form.case_report.errors %}
-                        {{ form.case_report(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.case_report.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.case_report(class="form-control form-control-lg") }}
-                    {% endif %}
-            </div>
-
-
-
-   <div style="margin-left:50%;">
-        {{ form.submit(class="btn btn-primary", style="width:39%;" ) }}
-
-                       </div>
-
-        </form>
-    </div>
-</div>
-
-
-              </div>
-              <!-- /.box-body -->
-
-
-        </div>
+            <!-- /.box-body -->
+          </div>
           <!-- /.box -->
         </div>
-        <!--/.col (left) -->
-        <!-- right column -->
-
-
-        <!--/.col (right) -->
-
-
-
-      <!-- /.row -->
-      <!-- Content Wrapper. Contains page content -->
-
-
-
-
-
-
+      </div>
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
-
-
   <footer class="main-footer">
 
   </footer>
@@ -371,6 +278,11 @@
 
 
 <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+
+
+<script src="{{ url_for('static', filename='bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+
 
 
 <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
