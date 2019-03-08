@@ -3,6 +3,7 @@ from flaskext.mysql import MySQL
 import mysql.connector
 import configparser
 from sqlalchemy import create_engine
+import pyrebase
 
 
 
@@ -30,17 +31,20 @@ def connection2():
                                  autocommit=True)
     cur = db.cursor()
 
-    return cur, db
+    engine = create_engine("mysql+mysqlconnector://root:SMIhmwn19*@localhost/SMI_DB")
+
+    return cur, db, engine
 
 
 def BankConnection():
 
     status=0
-    cur = ""
-    db = ""
+
 
     config = configparser.ConfigParser()
     config.read('credentials.ini')
+
+    cur, db, engine = connection2()
 
 
     try:
@@ -55,14 +59,27 @@ def BankConnection():
 
     except Exception as e:
         status =1
+    return status, cur, db, engine
 
 
-    return status, cur , db, engine
 
-def SMI_engine():
-    engine = create_engine("mysql+mysqlconnector://root:SMIhmwn19*@localhost/SMI_DB")
 
-    return engine
+
+
+
+
+def firebaseConnection():
+    config = {
+        "apiKey": "AIzaSyBdvcfSBiaMQjb0q9g04emiCFYksGMvJfo",
+        "authDomain": "saudi-money-investigator.firebaseapp.com",
+        "databaseURL": "https://saudi-money-investigator.firebaseio.com",
+        "projectId": "saudi-money-investigator",
+        "storageBucket": "saudi-money-investigator.appspot.com",
+        "messagingSenderId": "1098052350164"
+
+    }
+
+    return pyrebase.initialize_app(config)
 
 
 
