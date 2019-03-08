@@ -54,13 +54,13 @@ class DecisionTree:
         testX = testX.rename(columns={'nameDest': 'clientID'})
 
         ### Save predictions results  ####
-        testX.to_csv('predictionsResults.csv', encoding='utf-8', index=False)
+        #testX.to_csv('predictionsResults.csv', encoding='utf-8', index=False)
 
 
         ### Saving Suspicious Transactions in the testing dataset  ####
 
         suspiciousTransactions = testX.loc[(testX.isFruad_result == 1)]
-        suspiciousTransactions.to_csv('suspiciousTransactions.csv', encoding='utf-8', index=False)
+        #suspiciousTransactions.to_csv('suspiciousTransactions.csv', encoding='utf-8', index=False)
 
         cur1, db1, engine2 = connection2()
         cur1.execute('DROP TABLE `SMI_DB`.`SuspiciousTransaction`')
