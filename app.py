@@ -95,7 +95,7 @@ def login():
             db.commit()
             cur.close()
             db.close()
-    task = long_task.apply_async()
+    #task = long_task.apply_async()
     return render_template('login.html', form=form)
 
 
@@ -296,7 +296,7 @@ def Report():
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():
-    cur, db = connection2()
+    cur, db, engine = connection2()
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
@@ -307,9 +307,9 @@ def cases():
         form = ViewCasesForm()
         if form.validate_on_submit():
             print(form.submit)
-            id = request.form['submit'][-1]
-            return redirect((url_for('case' , id = id)))
-    return render_template("cases.html", data=data, form=form)
+            id = request.form['submit'][-3:]
+            return redirect((url_for('case', id=id)))
+        return render_template("cases.html", data=data, form=form)
 
 
 @celery.task(bind=True)
@@ -364,7 +364,28 @@ def taskstatus(task_id):
         }
     return jsonify(response)
 
+@app.route("/case/<id>", methods=['GET', 'POST'])
+def case(id):
+    # Only logged in users can access bank profile
+    print(type(id))
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+    cur, db, engine = connection2()
+    query = "SELECT * FROM SMI_DB.ClientCase WHERE caseID = 297"
+    cur.execute(query)
+    data = cur.fetchall()
+    clientID = data[0][3]
+    profileLabel=''
+    if data[0][1] == 'Low':#Need to change it Meduim
+        profileLabel ='label label-warning'
+    else:#High
+        profileLabel = 'label label-danger'
 
+    query = "SELECT * FROM SMI_DB.Client WHERE clientID = clientID"
+    cur.execute(query)
+    data2 = cur.fetchall()
+
+    return render_template("case.html",data= data, data2= data2, label= profileLabel)
 
 
 

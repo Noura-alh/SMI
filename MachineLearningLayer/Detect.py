@@ -41,10 +41,6 @@ class Detection:
         numOfHigh =0
         numOFMeduim = 0
         for id, name in result:
-            #query = "INSERT INTO Client (clientID, clientName) VALUES(%s,%s)"
-            #val = (id, name)
-            #print(name)
-            #cur1.execute(query, val)
             dt_class = 0
             mc_class = 0
             transaction_class =0
@@ -102,7 +98,7 @@ class Detection:
 
             cur1.execute("UPDATE SMI_DB.Client SET profileClassification= '%s'WHERE clientID='%s' " % (profile_class, id))
 
-            if profile_class == 'High' or 'Medium':
+            if profile_class == 'Low':
                 date_now = datetime.now()
                 formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
@@ -116,49 +112,7 @@ class Detection:
         print('Number of Meduim clients:', numOFMeduim)
         print('Number of High clients:', numOfHigh)
 
+a = Detection()
+a.Detect()
 
 
-
-'''
-
-for clientName in suspTransction AND multiCertire.dropDuplication  :
-
-    ### genrate profile without profile_class or general_searchResult ####
-    general_search_class = generalSearch(clientName)
-    if clientName in suspTransction:
-        dt_class = 1
-    if clientName in multiCertire:
-        mc_class = multiCertire.score
-    profile_class = (0.5*dt_class) + (0.5*mc_class)
-
-    ### INSERT  prodile_class  ####
-
-    if 0.7 < profile_class <= 1:
-        clientClass = 'High'
-    elif 0.33 < profile_class <= 0.7:
-        clientClass = 'Medium'
-    elif 0 < profile_class <= 0.33:
-        clientClass = 'Low'
-    else:
-        clientClass = 'Clean'  '''
-
-    ## case
-
-
-
-'''
-cur, db, engine = connection2()
-df_suspiciousTransactions = pd.read_csv('testingRecordes.csv')
-df_suspiciousTransactions.to_sql(name='transactions', con=engine, if_exists ='append', index=False) #appened work
-
-'''
-
-'''dt_class = 0
-mc_class = 0
-profile_class = 0
-search = GeneralSearch('"حجاج العجمي"', 1966002811)
-search.twitter_search()
-GeneralSearch_result, GeneralSearch_class = search.google_search()
-print('client Name: ', '"حجاج العجمي"')
-print('search_result: ', GeneralSearch_result)
-print('client_class: ', GeneralSearch_class)'''

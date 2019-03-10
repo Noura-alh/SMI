@@ -30,8 +30,10 @@ class DecisionTree:
 
         LOACTION = testX['location']
         NAMES = testX['clientName']
+        TransID = testX['transactionID']
         del testX['location']
         del testX['clientName']
+        del testX['transactionID']
         testX = testX.rename(columns={'clientID': 'nameDest'})
 
 
@@ -51,6 +53,7 @@ class DecisionTree:
         testX['isFruad_result'] = predict
         testX['location'] = LOACTION
         testX['clientName'] = NAMES
+        testX['transactionID'] = TransID
         testX = testX.rename(columns={'nameDest': 'clientID'})
 
         ### Save predictions results  ####
