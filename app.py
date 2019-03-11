@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session, jsonify
 from flaskext.mysql import MySQL
-from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm,reportCase,ViewCasesForm
+from flask_paginate import Pagination, get_page_parameter
+from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm,reportCase,ViewCasesForm,SearchForm
 from DBconnection import connection2, BankConnection
 from passwordRecovery import passwordRecovery
 from MachineLearningLayer.Detect import Detection
@@ -199,7 +200,7 @@ def clientProfile():
     client_form = clientForm()
     new_comment = newCommentForm()
     old_comment = oldCommentForm()
-    cur, db = connection2()
+    cur, db, engine = connection2()
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
@@ -215,7 +216,7 @@ def clientProfile():
             client_form.clientSalary.data = column[2] #clientSalary
             client_form.clientClass.data = column[3]  #clientClass
 
-    cur, db = connection2()
+    cur, db, engine = connection2()
     query = "SELECT * FROM SMI_DB.Comment WHERE clientID = 1"
     cur.execute(query)
     record = cur.fetchall()
@@ -296,20 +297,51 @@ def Report():
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():
+    search = False
+    q = request.args.get('q')
+    if q:
+        search = True
+
     cur, db, engine = connection2()
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
     else:
+
+        form = ViewCasesForm()
+        search_form = SearchForm()
+        per_page = 4
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        offset = (page - 1) * per_page
         query = "SELECT * FROM SMI_DB.ClientCase "
         cur.execute(query)
-        data = cur.fetchall()
-        form = ViewCasesForm()
+        total = cur.fetchall()
+        cur.execute("SELECT * FROM SMI_DB.ClientCase ORDER BY caseID DESC LIMIT %s OFFSET %s", (per_page, offset))
+        cases = cur.fetchall()
+
+        if search_form.search_submit.data and search_form.validate_on_submit():
+            return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
+
         if form.validate_on_submit():
-            print(form.submit)
-            id = request.form['submit'][-3:]
+            # id = form.hidden.data
+            # id = request.form.get('case_submit')
+            id = request.form['caseView']
+            # id2 = request.form['caseDownload']
+            print(id)
             return redirect((url_for('case', id=id)))
-        return render_template("cases.html", data=data, form=form)
+
+        pagination = Pagination(page=page, per_page=per_page, total=len(total), offset=offset, search=search,
+                                record_name='cases', css_framework='bootstrap3')
+        # 'page' is the default name of the page parameter, it can be customized
+        # e.g. Pagination(page_parameter='p', ...)
+        # or set PAGE_PARAMETER in config file
+        # also likes page_parameter, you can customize for per_page_parameter
+        # you can set PER_PAGE_PARAMETER in config file
+        # e.g. Pagination(per_page_parameter='pp')
+        # , pagination=pagination
+
+        return render_template("cases.html", cases=cases, form=form, form2=search_form, pagination=pagination,
+                               css_framework='foundation', caseId=0)
 
 
 @celery.task(bind=True)
@@ -367,25 +399,60 @@ def taskstatus(task_id):
 @app.route("/case/<id>", methods=['GET', 'POST'])
 def case(id):
     # Only logged in users can access bank profile
-    print(type(id))
+
     if session.get('username') == None:
         return redirect(url_for('home'))
+    search_form = SearchForm()
+
+    if search_form.search_submit.data and search_form.validate_on_submit():
+        return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
+
+
     cur, db, engine = connection2()
-    query = "SELECT * FROM SMI_DB.ClientCase WHERE caseID = 297"
-    cur.execute(query)
+    cur.execute("SELECT * FROM SMI_DB.ClientCase WHERE caseID=%s " % (id))
     data = cur.fetchall()
-    clientID = data[0][3]
+    client_ID = data[0][3]
     profileLabel=''
     if data[0][1] == 'Low':#Need to change it Meduim
         profileLabel ='label label-warning'
     else:#High
         profileLabel = 'label label-danger'
 
-    query = "SELECT * FROM SMI_DB.Client WHERE clientID = clientID"
-    cur.execute(query)
+    cur.execute("SELECT * FROM SMI_DB.Client WHERE clientID=%s " % ( client_ID))
     data2 = cur.fetchall()
 
-    return render_template("case.html",data= data, data2= data2, label= profileLabel)
+    cur.execute("SELECT * FROM SuspiciousTransaction WHERE clientID=%s " % (client_ID))
+    transaction = cur.fetchall()
+
+    return render_template("case.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction)
+
+@app.route("/caseTOprint/<id>", methods=['GET', 'POST'])
+def caseTOprint(id):
+    # Only logged in users can access bank profile
+
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+    search_form = SearchForm()
+
+
+
+    cur, db, engine = connection2()
+    cur.execute("SELECT * FROM SMI_DB.ClientCase WHERE caseID=%s " % (id))
+    data = cur.fetchall()
+    client_ID = data[0][3]
+    profileLabel=''
+    if data[0][1] == 'Low':#Need to change it Meduim
+        profileLabel ='label label-warning'
+    else:#High
+        profileLabel = 'label label-danger'
+
+    cur.execute("SELECT * FROM SMI_DB.Client WHERE clientID=%s " % ( client_ID))
+    data2 = cur.fetchall()
+
+    cur.execute("SELECT * FROM SuspiciousTransaction WHERE clientID=%s " % (client_ID))
+    transaction = cur.fetchall()
+
+    return render_template("caseTOprint.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction)
 
 
 

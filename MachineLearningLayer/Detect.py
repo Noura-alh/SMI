@@ -112,7 +112,3 @@ class Detection:
         print('Number of Meduim clients:', numOFMeduim)
         print('Number of High clients:', numOfHigh)
 
-a = Detection()
-a.Detect()
-
-

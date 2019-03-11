@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    <style>
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    background: #6aa6ed;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
+    </style>
+
+
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> SMI | View Cases</title>
@@ -97,7 +118,7 @@
                 <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
                 <p>
-                  Sarah Sami
+                 {{ session['username'] }}
                   <small>AML Officer</small>
                 </p>
               </li>
@@ -141,20 +162,20 @@
 
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-search"></i> <span>Search For Client</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+            <a><i class="fa fa-search"></i> <span>Search For Client</span></a>
 
-              <form action="#" method="get" class="sidebar-form">
+     <!-- search form -->
+              <form action="" method="post" class="sidebar-form" role="form">
+                   {{ form2.hidden_tag() }}
               <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                    <span class="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                      </button>
-                    </span>
+                   {{ form2.search( class="form-control")  }}
+
+                        {{ form2.search_submit(class="btn btn-primary btn-block btn-flat input-group-btn") }}
+                        <!-- <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button> -->
               </div>
             </form>
+
           </a>
         </li>
 
@@ -173,10 +194,18 @@
         </li>
 
 
-        <li>
-            <a href="{{ url_for('manageBankData') }}">
-          <span>Manage Bank Data</span>
+       <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i> <span>Manage Bank Data</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
           </a>
+          <ul class="treeview-menu">
+           <li><a href="{{ url_for('DatabaseSetup') }}"><i class="fa fa-circle-o"></i> Database Setup</a></li>
+            <li><a href="{{ url_for('manageBankData') }}"><i class="fa fa-circle-o"></i>business Rules Setup</a></li>
+
+          </ul>
         </li>
 
         <li>
@@ -209,47 +238,46 @@
 
     <!-- Main content -->
     <section class="content">
-      <div class="row">
-        <div class="col-md-6">
-
-
-
-        </div>
-        <!-- /.col -->
-        <div class="col-md-6">
-
-        </div>
-        <!-- /.col -->
-      </div>
       <!-- /.row -->
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
               <h3 class="box-title">Cases</h3>
-
             </div>
             <!-- /.box-header -->
+
+
             <div class="box-body table-responsive no-padding">
              <form  action="{{ url_for('cases') }}" method="post" role="form">
               {{ form.hidden_tag() }}
+             {{ pagination.info }}
               <table class="table table-hover">
                 <tr>
                   <th>Case Id</th>
-
+                    <th>Case Classification</th>
+                    <th>Date</th>
                   <th>Action</th>
-
                 </tr>
-
                 <!-- tr problem -->
-                  {% for item in data %}
+                   {% for case in cases %}
                     <tr>
-                  <td>{{ item[0] }}</td>
+                    <td>{{ case[0] }}</td>
+                     <td> {{ case[1] }}</td>
+                     <td> {{ case[2] }}</td>
+                    <td>
 
-                    <td> {{ form.submit(class="btn btn-primary btn-sm"  , value = 'View Case '+ item[0]|string )}}</td>
-                    </tr>
-                  {% endfor %}
+                        <button type="submit" class="btn btn-primary btn-sm" name="caseView" value="{{ case[0] }}">View Case</button>
+                        <a href= '/download/{{ case[0] }} ' class="btn btn-primary" > <i class="fa fa-save"></i></a>
+                    </td>
+                {% endfor %}
+
               </table>
+
+
+                <div style="margin-left: 37%">
+             {{ pagination.links }}
+            </div>
 
              </form>
             </div>

@@ -102,185 +102,17 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
       </head>
-      <body class="hold-transition skin-blue sidebar-mini">
+      <body style="background-color:#eaedee;">
       <div class="wrapper"  >
 
         <header class="main-header">
-          <!-- Logo -->
-          <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-              <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
 
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
-          </a>
-          <!-- Header Navbar: style can be found in header.less -->
-          <nav class="navbar navbar-static-top">
-            <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </a>
-
-            <div class="navbar-custom-menu">
-              <ul class="nav navbar-nav">
-                <!-- Notifications: style can be found in dropdown.less -->
-                <li class="dropdown notifications-menu">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-bell-o"></i>
-                    <span class="label label-warning"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li class="header">You have 1 notifications</li>
-                    <li>
-                      <!-- inner menu: contains the actual data -->
-                      <ul class="menu">
-
-                        <li>
-                          <a href="#">
-                            <i class="fa fa-warning text-yellow"></i>
-                            This is to inform you that there is a
-                            suspicious transaction has been detected in
-                            “Client Name: Khaild, ID:12345” account
-                          </a>
-                        </li>
-
-                      </ul>
-                    </li>
-                    <li class="footer"><a href="#">View Cases</a></li>
-                  </ul>
-                </li>
-
-                <!-- User Account: style can be found in dropdown.less -->
-                <li class="dropdown user user-menu">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
-                     <span class="hidden-xs">{{ session['username'] }}</span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <!-- User image -->
-                    <li class="user-header">
-                   <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
-
-
-                      <p>
-                        Sarah Sami
-                        <small>AML Officer</small>
-                      </p>
-                    </li>
-                    <!-- Menu Body -->
-
-                    <!-- Menu Footer-->
-                    <li class="user-footer">
-                      <div style="margin-left:38%;">
-                        <a href="#" class="btn btn-default btn-flat">Profile</a>
-                      </div>
-                    </li>
-                  </ul>
-                </li>
-                <!-- sign out -->
-                   <li>
-                     <a> <div class="text-center" id="google_translate_element"></div></a>
-                 </li>
-
-                <li>
-                  <a href="#"><i class="fa fa-sign-out"></i></a>
-                </li>
-              </ul>
-            </div>
-          </nav>
         </header>
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
-
-        </div>
-        <div class="pull-left info">
-          <p>{{ session['username'] }}</p>
-          <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
-        </div>
-      </div>
-
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-search"></i> <span>Search For Client</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-
-              <form action="#" method="get" class="sidebar-form">
-              <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                    <span class="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                      </button>
-                    </span>
-              </div>
-            </form>
-          </a>
-        </li>
-
-
-        <li>
-          <a href="{{ url_for('home') }}">
-            <i class="fa fa-home"></i> <span>Home</span>
-
-          </a>
-        </li>
-
-        <li>
-          <a href="{{ url_for('manageProfile') }}">
-          <span>Manage Profile</span>
-          </a>
-        </li>
-
-
-        <li>
-            <a href="{{ url_for('manageBankData') }}">
-          <span>Manage Bank Data</span>
-          </a>
-        </li>
-
-        <li>
-           <a href="{{ url_for('cases') }}">
-          <span>View Cases</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
-        </li>
-
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
 
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
+  <div class="content-wrapper" style="background-color:#eaedee;">
 
-
-      <ol class="breadcrumb">
-         <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
-          <li><a href="{{ url_for('bankP') }}">Profile</a></li>
-        <li class="active">Case</li>
-
-      </ol>
-    </section>
-</br>
     <!-- Main content -->
     <section class="content">
       <!-- Profile Image -->
@@ -290,11 +122,6 @@
 
 
           <h3 class="notranslate">
-                <div style="margin-left: 92%">
-
-            <a href= '/download/{{ clientId }} ' class="btn btn-default" > <i class="fa fa-save"></i></a>
-                </div>
-
               <label class="{{label }}" class="profile-username text-center">{{ data[0][1] }}</label> &nbsp; {{ data2[0][1] }}</h3>
 
 
@@ -355,12 +182,7 @@
             </div>
 
               <div class="box-footer">
-              <div style="margin-left:38%;">
 
-                <button type="submit" class="btn btn-default">Report</button>
-                   <button type="submit" class="btn btn-default">View Client Profile</button>
-              </div>
-              </div>
           </div>
           <!-- /.box-body -->
         </div>

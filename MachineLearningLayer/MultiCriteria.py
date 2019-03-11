@@ -91,7 +91,7 @@ class MultiCriteria:
                 self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == max_amount)]
                 self.cur.execute("SELECT * FROM SMI_DB.SuspiciousTransaction WHERE transactionID = %s;",filtered_df_['transactionID'])
                 record = self.cur.fetchall()
-                if (record is None): # Dosen't exisit
+                #if (record is None): # Dosen't exisit
                     #query = "INSERT INTO SMI_DB.SuspiciousTransaction (userName, email, fullname, password, bank_id ) VALUES(%s,%s,%s,%s,%s)"
                     #val = (form.username.data, form.email.data, form.fullName.data, form.password.data, 1)
                     #cur.execute(query, val)
