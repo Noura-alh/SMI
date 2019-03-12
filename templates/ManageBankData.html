@@ -7,14 +7,25 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-       <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+  <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
   <!-- Font Awesome -->
-    <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
+  <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+
   <!-- Theme style -->
-      <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
+  <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
+
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-      <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
+
+   <link href="{{ url_for('static', filename='multiselect.css') }}" rel="stylesheet">
+
+
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -34,9 +45,10 @@
     <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
 
-      <span class="logo-mini"  ><img  height="45" width="38" src="../../dist/img/slogo.png" alt="User Image"></span>
+   <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
+
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">  <img  height="42" width="130" src="../../dist/img/newlogo.png" alt="User Image"></span>
+      <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -80,16 +92,16 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="../../dist/img/Riyadh1.png" class="user-image" alt="User Image">
-              <span class="hidden-xs">Sarah Sami</span>
+              <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
+                 <span class="hidden-xs">{{ session['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="../../dist/img/Riyadh1.png" class="img-circle" alt="User Image">
+                <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
                 <p>
-                  Sarah Sami
+                  {{ session['username'] }}
                   <small>AML Officer</small>
                 </p>
               </li>
@@ -116,16 +128,17 @@
 
 
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <aside class="main-sidebar">
+    <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="../../dist/img/Riyadh.png" class="img-circle" alt="User Image">
+            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
+
         </div>
         <div class="pull-left info">
-          <p>Sarah Sami</p>
+          <p>{{ session['username'] }}</p>
           <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
         </div>
       </div>
@@ -136,55 +149,54 @@
 
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-search"></i> <span>Search For Client</span>
+            <a><i class="fa fa-search"></i> <span>Search For Client</span></a>
+
+     <!-- search form -->
+              <form action="" method="post" class="sidebar-form" role="form">
+                   {{ form2.hidden_tag() }}
+              <div class="input-group">
+                   {{ form2.search( class="form-control")  }}
+
+                        {{ form2.search_submit(class="btn btn-primary btn-block btn-flat input-group-btn") }}
+                        <!-- <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button> -->
+              </div>
+            </form>
+
+          </a>
+        </li>
+
+
+        <li>
+          <a href="{{ url_for('home') }}">
+            <i class="fa fa-home"></i> <span>Home</span>
+
+          </a>
+        </li>
+
+        <li>
+          <a href="{{ url_for('manageProfile') }}">
+          <span>Manage Profile</span>
+          </a>
+        </li>
+
+
+           <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i> <span>Manage Bank Data</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
-
-              <form action="#" method="get" class="sidebar-form">
-              <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                    <span class="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                      </button>
-                    </span>
-              </div>
-            </form>
           </a>
-        </li>
+          <ul class="treeview-menu">
+           <li><a href="{{ url_for('DatabaseSetup') }}"><i class="fa fa-circle-o"></i> Database Setup</a></li>
+            <li><a href="{{ url_for('manageBankData') }}"><i class="fa fa-circle-o"></i>business Rules Setup</a></li>
 
-
-        <li>
-          <a href="home.html">
-            <i class="fa fa-home"></i> <span>Home</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
+          </ul>
         </li>
 
         <li>
-          <a href="OldManageProfile.html">
-          <span>Manage Profile</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
-        </li>
-
-
-        <li>
-          <a href="ManageBankData.html">
-          <span>Manage Bank Data</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
-        </li>
-
-
-        <li>
-          <a href="cases.html">
+           <a href="{{ url_for('cases') }}">
           <span>View Cases</span>
             <span class="pull-right-container">
 
@@ -199,6 +211,20 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
@@ -206,13 +232,22 @@
 
       </h1>
       <ol class="breadcrumb">
-        <li><a href="home.html"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="bankProfile.html">Profile</a></li>
+        <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="{{ url_for('bankP') }}">Profile</a></li>
         <li class="active">Manage Bank Data</li>
       </ol>
     </section>
+
 </br>
+
+
+
+
+
+
     <!-- Main content -->
+
+
     <section class="content">
       <div class="row">
         <!-- left column -->
@@ -225,51 +260,112 @@
             <!-- /.box-header -->
             <!-- form start -->
 </br>
-            <form role="form">
+
+            <form  action="{{ url_for('manageBankData') }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
               <div class="box-body">
-                <div class="form-group">
-                  <label for="exampleInputFile">Upload Business Rules</label>
-                  <input type="file" id="exampleInputFile">
-                  <p class="help-block">file extention, .xml</p>
-                  <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount1()">Delete</button>
+              <input type="radio" name="tab" value="igotnone" onclick="show1();" /> Use Template &ensp; &ensp; &ensp;
+                  <input type="radio" name="tab" value="igottwo" onclick="show2();" /> Upload Business Rules
+                  <hr>
+
+                 <!-- Upload Business Rules code -->
+                <div  id="div1" style="display: none" >
+                   <div class="form-group">
+                        {{ form.businessRules_file.label(class="col-md-3 control-label") }}
+                   <div class="col-md-8">
+                       <!-- Select input form -->
+                       {{ form.businessRules_file }}
+                   <!--  <input type="file" id="exampleInputFile"  > -->
+                  <p class="help-block">file extention, .txt</p>
+                    </div>
+                      </div>
+                  <button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" >Delete</button>
 
                 </br>
-                <hr>
-
-
-                      <div class="form-group">
-                        <label for="exampleInputFile">Upload Bank Accounts</label>
-                        <input type="file" id="exampleInputFile">
-
-                        <p class="help-block">file extention, .xls .xlt .xlsm .xlsxm</p>
-                        <Button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" Onclick="deleteAccount2()">Delete</button>
-
-                      </div>
                     <hr>
                       <Button class="btn btn-default" value="Submit" style="margin-left:42%; width:20%; tect-align:center;">Submit</button>
-
-                      <script>
-                      function deleteAccount1(){
-                      confirm("Are you sure you want to delete bank Business rules?");
-                        }
-              </script>
-
-              <script>
-              function deleteAccount2(){
-              confirm("Are you sure you want to delete bank accounts?");
-                }
-      </script>
-
-
-                    <!-- /.box-body -->
-
-
-
                 </div>
+
+                   <!-- Template code -->
+                   <div  style="display: none" id="div2">
+                       <!-- For inserting black list names -->
+                    <div class="form-group">
+                        {{ form.sanction_list.label(class="col-md-3 control-label") }}
+                   <div class="col-md-8">
+                       <!-- Select input form -->
+                       <input name='file_br' type="file" accept="Br_file/*" />
+                   <!--  <input type="file" id="exampleInputFile"  > -->
+                  <p class="help-block">file extention, .txt</p>
+                    </div>
+                      </div>
+
+                        <hr>
+
+                       <!-- High Risk Countries -->
+
+                        <div class="form-group">
+                             {{ form.risk_countries.label(class="col-md-3 control-label" ) }}
+                   <!-- <label class="col-md-3 control-label" style="text-align:left;">High Risk countries:</label>-->
+                   <div class="col-md-8">
+
+                                {{ form.risk_countries( id='testSelect1') }}
+
+
+                            <!-- JavaScript for Multi Select -->
+                            <script src="{{ url_for('static', filename='multiselect.min.js') }}"></script>
+
+
+                            <script>
+                                document.multiselect('#testSelect1');
+                            </script>
+                            <!-- ..................... -->
+                    </div>
+                      </div>
+
+                      <hr>
+                        <!-- High Risk Countries -->
+                       <div class="form-group">
+
+                         {{ form.exceed_avg_tran.label(class="col-md-3 control-label") }}
+                   <div class="col-md-8">
+                       {{ form.exceed_avg_tran }}
+                    </div>
+                      </div>
+
+                      <hr>
+                            <!-- Suspicious Transaction   -->
+                       <div class="form-group">
+                      {{ form.amount.label(class="col-md-3 control-label" ) }}
+                   <div class="col-md-3">
+
+                       {{ form.amount}}
+                    </div>
+                      </div>
+                    <hr>
+                        <div style="width:40%; margin-left:28%;">
+                         {{ form.bank_submit(class="btn btn-primary btn-block btn-flat" )}}
+                        </div>
+                   </div>
               </div>
               <!-- /.box-body -->
             </form>
 
+                <script>
+function myFunction() {
+  confirm("Press a button!");
+}
+</script>
+
+            <script>
+            function show1(){
+              document.getElementById('div1').style.display ='none';
+              document.getElementById('div2').style.display ='block';
+            }
+            function show2(){
+              document.getElementById('div1').style.display = 'block';
+              document.getElementById('div2').style.display ='none';
+            }
+                        </script>
         </div>
           <!-- /.box -->
         </div>
@@ -307,26 +403,15 @@
 </div>
 <!-- ./wrapper -->
 
-<script>
-    location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
-</script>
-<!-- Bootstrap 3.3.7 -->
 
-<script>
-    location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
-</script>
+<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
-<!-- Slimscroll -->
 
-<script>
-    location.href = Flask.url_for('bower_components/jquery-slimscroll/jquery.slimscroll.min.js', {});
-</script>
 
-<!-- AdminLTE App -->
+<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-<script>
-    location.href = Flask.url_for('dist/js/adminlte.min.js', {});
-</script>
+
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
 
 </body>
 </html>

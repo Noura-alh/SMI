@@ -1,8 +1,10 @@
-from flask import Flask, redirect, render_template, request, session, abort, url_for, flash, redirect, session, jsonify
+from flask import Flask, redirect, render_template, request, session, abort, \
+    url_for, flash, redirect, session, jsonify,Markup
 from flaskext.mysql import MySQL
 from flask_paginate import Pagination, get_page_parameter
-from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, clientForm, oldCommentForm, newCommentForm, dbSetupForm,reportCase,ViewCasesForm,SearchForm
-from DBconnection import connection2, BankConnection
+from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, \
+    clientForm, oldCommentForm, newCommentForm, dbSetupForm,reportCase,ViewCasesForm,SearchForm,manageBankDataForm
+from DBconnection import connection2, BankConnection,firebaseConnection
 from passwordRecovery import passwordRecovery
 from MachineLearningLayer.Detect import Detection
 from datetime import datetime
@@ -10,9 +12,12 @@ import configparser
 from celery import Celery
 import random
 import time
+from flask_mail import Mail, Message
+import os
 
 
 app = Flask(__name__)
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app.config['SECRET_KEY'] = 'af6695d867da3c7d125a99f5c17ea79a'
 app.config['MYSQL_DATABASE_USER'] = 'root'
@@ -21,6 +26,13 @@ app.config['MYSQL_DATABASE_DB'] = 'SMI_DB'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'smi.ksu2019@gmail.com'
+app.config['MAIL_PASSWORD'] = 'SMIHMWN19'
+app.config['MAIL_DEFAULT_SENDER'] = 'smi.ksu2019@gmail.com'
 
 
 mysql = MySQL()
@@ -28,8 +40,15 @@ mysql.init_app(app)
 conn = mysql.connect()
 cursor = conn.cursor()
 
+# Initialize extensions
+mail = Mail(app)
+
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
+
+#Firebase connection
+
+firebase = firebaseConnection()
 
 
 @app.route("/")
@@ -185,14 +204,61 @@ def manageProfile():
     return render_template("ManageProfile.html", form = form)
 
 
-@app.route("/ManageBankData")
+@app.route("/ManageBankData", methods=['GET', 'POST'])
 def manageBankData():
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
+    form = manageBankDataForm()
+    search_form = SearchForm()
+    status, cur, db, engine = BankConnection()
+    if form.bank_submit.data and form.validate_on_submit():
+        ## check if there's prevoius BR and confirm to update it
 
-    return render_template("ManageBankData.html")
+        print()
+        target = os.path.join(APP_ROOT, 'Br_file/')
+        print(target)
+        if not os.path.isdir(target):
+            os.mkdir(target)
 
+        file = request.files.get('file_br')
+        print(file)
+        filename = file.filename
+        print(filename)
+
+        if filename.split(".", 1)[1] != 'txt':
+            flash('File extention should be txt', 'danger')
+            return render_template("ManageBankData.html", form=form)
+
+        else:
+            dest = "/".join([target, filename])
+            print(dest)
+            file.save(dest)
+
+        db = firebase.database()
+        # businessRules_file = businessRules_file.data
+        sanction_list = open("Br_file/" + filename, "r")
+        risk_countries = form.risk_countries.data
+        exceed_avg_tran = form.exceed_avg_tran.data
+        # type1 = form.type.data
+        amount = form.amount.data
+        db.child('Rule1').child('highRiskCountries').set(risk_countries)
+        db.child('Rule2').child('exceedingAvgTransaction').set(exceed_avg_tran)
+        # db.child('Rule3').child('suspiciousTransaction').child('Type').set(type1)
+        db.child('Rule3').child('suspiciousTransaction').child('amount').set(amount)
+        db.child('Rule4').child('blackList').set(sanction_list.read().splitlines())
+
+        if status == 1:
+            flash(Markup(
+                'You didn''t setup you''r database, please click <a href="/DatabaseSetup" class="alert-link">here</a> to setup '),
+                  'danger')
+        return redirect((url_for('manageBankData', form=form)))
+
+    if search_form.search_submit.data and search_form.validate_on_submit():
+        return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
+
+
+    return render_template("ManageBankData.html", form=form, form2=search_form)
 
 
 @app.route("/clientProfile", methods=['GET', 'POST'])
@@ -251,8 +317,29 @@ def DatabaseSetup():
     if session.get('username') == None:
         return redirect(url_for('home'))
     form = dbSetupForm()
-    if form.validate_on_submit():
+    status, cur, db, engine = BankConnection()
+    db = firebase.database()
+    isFB_Connected = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
+    if status == 0: #If DB is already set bring the form.
+        config = configparser.ConfigParser()
+        config.read('credentials.ini')
+        form.db_host.data = config['DB_credentials']['host']
+        form.db_name.data = config['DB_credentials']['db']
+        form.db_pass.data = config['DB_credentials']['passwd']
+        form.db_user.data = config['DB_credentials']['user']
 
+    if form.validate_on_submit():
+        if status == 0: # If the user tried to connect to already connected DB
+            config = configparser.ConfigParser()
+            config.read('credentials.ini')
+
+            if form.db_host.data==config['DB_credentials']['host']\
+                    and form.db_name.data == config['DB_credentials']['db']\
+                    and form.db_pass.data == config['DB_credentials']['passwd']\
+                    and form.db_user.data == config['DB_credentials']['user']:
+
+                flash('You are already connected to this database..', 'success')
+                return render_template("databaseSetup.html", form=form)
 
         config = configparser.ConfigParser()
         config['DB_credentials'] = {'host': form.db_host.data,
@@ -266,6 +353,12 @@ def DatabaseSetup():
             flash('Unable to connect please try again..', 'danger')
             return render_template("databaseSetup.html", form=form)
         else:
+            if isFB_Connected != 'false':
+                flash('Successfully connected to the database..Upload your business rules to start the analysis', 'success')
+                search_form = SearchForm()
+                form = manageBankDataForm()
+                return render_template("ManageBankData.html", form=form, form2=search_form)
+
             # Check if bussinse rule is uploaded
             flash('Successfully connected to the database..', 'success')
             return render_template("databaseSetup.html", form=form)
@@ -276,24 +369,43 @@ def DatabaseSetup():
 
     return render_template("databaseSetup.html", form = form)
 
-@app.route("/Report", methods=['GET', 'POST'])
-def Report():
+@app.route("/Report/<id>", methods=['GET', 'POST'])
+def Report(id):
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
     form = reportCase()
-    if not(form.validate_on_submit()):
-        return render_template("email.html", form=form)
+    print('Inside Report')
+    print(form.reciver.data)
+    if form.validate_on_submit():
+        #print('Calling sendReport')
+        #return redirect((url_for('sendReport', form=form)))
+        print('Inside sendReport')
+        print(form.reciver.data)
+        recipient = form.reciver.data
+        msg = Message(form.subject.data, recipient.split())
+        msg.body = form.email_body.data
+        print(msg)
+        mail.send(msg)
 
-        '''flash('Successfully connected to the database..', 'success')
-        return render_template("databaseSetup.html", form=form)
+        flash('Email has been sent Successfully..', 'success')
+    return render_template("email.html", form = form, clientID= id)
 
-    else:
-        flash('Unable to connect please try again..', 'danger')'''
+'''
+@app.route("/sendReport/<form>", methods=['GET', 'POST'])
+def sendReport(form):
+    print('Inside sendReport')
+    print(form.reciver.data)
+    recipient = form.reciver.data
+    msg = Message(form.subject.data, recipient.split())
+    msg.body = form.email_body.data
+    print(msg)
 
+    mail.send(msg)
 
+    flash('Email has been sent Successfully..', 'success')
+    return render_template("email.html", form=form) '''
 
-    return render_template("email.html", form = form)
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():

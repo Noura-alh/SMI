@@ -60,11 +60,10 @@ class dbSetupForm(FlaskForm):
    submit = SubmitField('Connect')
 
 class reportCase(FlaskForm):
-   reciver = StringField('To:1 ', validators= [DataRequired(), Email()])
-   sender = StringField('From:1 ', validators= [DataRequired(), Email()])
-   subject = StringField('Sujbect:1 ', validators=[DataRequired()])
-   email_body = TextAreaField('Message:1 ', render_kw={"rows": 5, "cols": 11})
-   case_report = FileField('Upload Business Rules:1')
+   reciver = StringField('To: ', validators= [DataRequired(), Email()])
+   subject = StringField('Sujbect: ', validators=[DataRequired()])
+   email_body = TextAreaField('Message: ', render_kw={"rows": 5, "cols": 11},validators=[DataRequired()])
+   #case_report = FileField('Upload Business Rules:1')
    submit = SubmitField('Send')
    #Report file:
 
@@ -82,7 +81,6 @@ class ViewProfileForm(FlaskForm):
    view_submit = SubmitField('View Profile')
 
 #Manage bank data from
-
 class manageBankDataForm(FlaskForm):
    businessRules_file = FileField('Upload Business Rules:')
    sanction_list = FileField('Upload Sanction List:')
@@ -132,7 +130,6 @@ class manageBankDataForm(FlaskForm):
    #type = SelectField('Type: ' , choices=[('Transfer', 'Transfer') , ('Cash out', 'Cash out')])
    amount = IntegerField('Transaction Risk Amount:' , validators=[DataRequired()])
    bank_submit = SubmitField('submit')
-
 
 
 

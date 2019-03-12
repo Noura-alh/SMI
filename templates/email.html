@@ -213,10 +213,7 @@
 
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Email
 
-      </h1>
       <ol class="breadcrumb">
         <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
           <li><a href="{{ url_for('bankP') }}">Profile</a></li>
@@ -234,7 +231,7 @@
           <!-- general form elements -->
           <div class="box box-default" style="margin-left:25%;">
             <div class="box-header with-border">
-              <h3 class="box-title">Report to MOI</h3>
+              <h3 class="box-title">Report</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
@@ -242,7 +239,8 @@
 
                   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-        <form action="{{ url_for('Report') }}" role="form" method="post" id="reused_form" enctype="multipart/form-data"  >
+        <form action="{{ url_for('Report',id=clientID) }}" role="form" method="post" id="reused_form"  >
+                    {{ form.hidden_tag() }}
             <div class="form-group">
                    {{ form.reciver.label(class="form-control-label") }}
                  {% if form.reciver.errors %}
@@ -255,20 +253,6 @@
                     {% else %}
                         {{ form.reciver(class="form-control form-control-lg") }}
                     {% endif %}
-            </div>
-             <div class="form-group has-feedback">
-               {{ form.sender.label(class="form-control-label") }}
-                    {% if form.sender.errors %}
-                        {{ form.sender(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.sender.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.sender(class="form-control form-control-lg") }}
-                    {% endif %}
-
             </div>
               <div class="form-group">
                 {{ form.subject.label(class="form-control-label") }}
@@ -299,19 +283,7 @@
                     {% endif %}
             </div>
 
-                        <div class="form-group">
-                 {{ form.case_report.label(class="form-control-label") }}
-                 {% if form.case_report.errors %}
-                        {{ form.case_report(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.case_report.errors %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.case_report(class="form-control form-control-lg") }}
-                    {% endif %}
-            </div>
+
 
 
 
