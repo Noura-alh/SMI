@@ -22,7 +22,7 @@ def connection():
 
     return cursor, conn
 
-def connection2():
+def connection2(): # SMI Connection
 
     db = mysql.connector.connect(host="localhost",
                                  user="root",

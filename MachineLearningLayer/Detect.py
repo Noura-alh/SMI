@@ -2,8 +2,8 @@ from MachineLearningLayer.DT import DecisionTree
 from DBconnection import BankConnection
 from DBconnection import connection2
 from datetime import datetime
-
-#from MachineLearningLayer.MultiCriteria import MultiCriteria
+from MachineLearningLayer.GeneralSearch import GeneralSearch
+from MachineLearningLayer.MultiCriteria import MultiCriteria
 
 
 class Detection:
@@ -49,16 +49,15 @@ class Detection:
             GeneralSearch_class =0
             NumberOfRecord = 0
             weightTree = 0.5
-            #mc = MultiCriteria()
-            #mc_class = mc.multi_criteria(id)
+            mc = MultiCriteria()
+            mc_class = mc.multi_criteria(id)
 
             # If the client has any suspsuoius transaction run general search
             if any(name in s for s in suspsuoiusClient):
                 dt_class = 1
-            #±if(id == 1966002811):
-              #  search = GeneralSearch('"' + name + '"', id)
-               # search.twitter_search()
-                #GeneralSearch_result, GeneralSearch_class = search.google_search()
+                search = GeneralSearch('"' + name + '"', id)
+                #search.twitter_search()
+                GeneralSearch_result, GeneralSearch_class = search.google_search()
 
             if (name in s for s in suspsuoiusClient):#counter for the number of suspsuoius transactions
                 NumberOfRecord = NumberOfRecord+1
@@ -98,7 +97,7 @@ class Detection:
 
             cur1.execute("UPDATE SMI_DB.Client SET profileClassification= '%s'WHERE clientID='%s' " % (profile_class, id))
 
-            if profile_class == 'Low':
+            if profile_class == 'Medium':
                 date_now = datetime.now()
                 formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
@@ -112,3 +111,5 @@ class Detection:
         print('Number of Meduim clients:', numOFMeduim)
         print('Number of High clients:', numOfHigh)
 
+#d = Detection()
+#d.Detect()

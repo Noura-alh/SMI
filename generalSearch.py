@@ -76,58 +76,52 @@ class GeneralSearch:
 
     def google_search(self):
         '''
-        This function runs a search by client name on google
+                This function runs a search by client name on google
+                '''
 
-        '''
+        res = []
+        service = build("customsearch", "v1", developerKey=self.GOOGLE_API_KEY)
+
+        res.append(service.cse().list(
+            q=self.clientName,
+            cx=self.GOOGLE_CSE_ID,
+            num=10,
+            start=1,
+        ).execute())
+
+        # pprint.pprint(res)
+
+        count = 0
+        InnerCount = 0
+        '''for each in res:
+          print('Length of ITEMS', len(each['items']))'''
         try:
-
-            res = []
-            service = build("customsearch", "v1", developerKey=self.GOOGLE_API_KEY)
-
-            res.append(service.cse().list(
-                q=self.clientName,
-                cx=self.GOOGLE_CSE_ID,
-                num=10,
-                start=1,
-            ).execute())
-
-            #pprint.pprint(res)
-
-
-            count = 0
-            InnerCount = 0
-
             for each in res:
-              print('Length of ITEMS', len(each['items']))
 
-            for each in res:
                 for i in range(0, len(each['items'])):
-                    print('TITLES \n')
-                    print(each['items'][i]['title'])
+                    # print('TITLES \n')
+                    # print(each['items'][i]['title'])
                     self.document = self.document + '\n' + each['items'][i]['title']
                     self.ResultGoogle.append(each['items'][i]['title'])
-                    print('CONTENT \n')
-                    print(each['items'][i]['snippet'])
+                    # print('CONTENT \n')
+                    # print(each['items'][i]['snippet'])
                     self.document = self.document + '\n' + each['items'][i]['snippet']
                     self.ResultGoogle.append(each['items'][i]['snippet'])
-            print('AFTER SUM \n'+self.document)
+            # print('AFTER SUM \n'+self.document)
             self.ResultGoogle = set(self.ResultGoogle)
             self.cacheResult['googleResult'].append(self.ResultGoogle)
-        except Exception as e:
+
             self.textDocument = sent_tokenize(self.document)
             self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
 
             self.docInfo = self.createDocuments(self.cleanText)
             self.create_freq_dict(self.cleanText)
-            self.calculate_TFIDF()
+            search_result, client_class = self.calculate_TFIDF()
+        except Exception as e:
+            search_result = 0
+            client_class = 'clean'
 
-
-        self.textDocument = sent_tokenize(self.document)
-        self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
-
-        self.docInfo = self.createDocuments(self.cleanText)
-        self.create_freq_dict(self.cleanText)
-        self.calculate_TFIDF()
+        return search_result, client_class
 
 
 

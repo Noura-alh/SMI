@@ -13,8 +13,9 @@ import json
 
 class GeneralSearch:
 
-    def __init__(self, clientName):
+    def __init__(self, clientName,id):
         self.clientName = clientName
+        self.clientID = id
         self.url = 'https://www.google.co.in/search?q={}'.format(self.clientName)
         self.document = ''
         self.textDocument = ''
@@ -44,8 +45,7 @@ class GeneralSearch:
         except Exception as e:
             print(str(e))
 
-        a.twitter_search()
-        a.google_search()
+
 
     def twitter_search(self):
 
@@ -69,7 +69,7 @@ class GeneralSearch:
             f.write(item['text'] + '\n')
             self.tweets.append(item['text'])
             self.document = self.document + '\n'+ item['text']
-            print(item['text'] if 'text' in item else item)
+            #print(item['text'] if 'text' in item else item)
 
         f.close()
         self.tweets = set(self.tweets)
@@ -78,9 +78,7 @@ class GeneralSearch:
     def google_search(self):
         '''
         This function runs a search by client name on google
-
         '''
-
 
         res = []
         service = build("customsearch", "v1", developerKey=self.GOOGLE_API_KEY)
@@ -92,34 +90,39 @@ class GeneralSearch:
             start=1,
         ).execute())
 
-        #pprint.pprint(res)
+        # pprint.pprint(res)
 
         count = 0
         InnerCount = 0
-        for each in res:
-          print('Length of ITEMS', len(each['items']))
+        '''for each in res:
+          print('Length of ITEMS', len(each['items']))'''
+        try:
+            for each in res:
 
-        for each in res:
-            for i in range(0, len(each['items'])):
-                print('TITLES \n')
-                print(each['items'][i]['title'])
-                self.document = self.document + '\n' + each['items'][i]['title']
-                self.ResultGoogle.append(each['items'][i]['title'])
-                print('CONTENT \n')
-                print(each['items'][i]['snippet'])
-                self.document = self.document + '\n' + each['items'][i]['snippet']
-                self.ResultGoogle.append(each['items'][i]['snippet'])
-        print('AFTER SUM \n'+self.document)
-        self.ResultGoogle = set(self.ResultGoogle)
-        self.cacheResult['googleResult'].append(self.ResultGoogle)
+                for i in range(0, len(each['items'])):
+                    # print('TITLES \n')
+                    # print(each['items'][i]['title'])
+                    self.document = self.document + '\n' + each['items'][i]['title']
+                    self.ResultGoogle.append(each['items'][i]['title'])
+                    # print('CONTENT \n')
+                    # print(each['items'][i]['snippet'])
+                    self.document = self.document + '\n' + each['items'][i]['snippet']
+                    self.ResultGoogle.append(each['items'][i]['snippet'])
+            # print('AFTER SUM \n'+self.document)
+            self.ResultGoogle = set(self.ResultGoogle)
+            self.cacheResult['googleResult'].append(self.ResultGoogle)
 
+            self.textDocument = sent_tokenize(self.document)
+            self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
 
-        self.textDocument = sent_tokenize(self.document)
-        self.cleanText = [self.cleanDocument(s) for s in self.textDocument]
+            self.docInfo = self.createDocuments(self.cleanText)
+            self.create_freq_dict(self.cleanText)
+            search_result, client_class = self.calculate_TFIDF()
+        except Exception as e:
+            search_result = 0
+            client_class = 'clean'
 
-        self.docInfo = self.createDocuments(self.cleanText)
-        self.create_freq_dict(self.cleanText)
-        self.calculate_TFIDF()
+        return search_result, client_class
 
 
 
@@ -171,22 +174,22 @@ class GeneralSearch:
         for each in cleanDoc:
             i += 1
             words = word_tokenize(each)
-            print('\n', words)
+            #print('\n', words)
             for word in words:
                 word = word.lower()
                 if word in self.keyWords:
                     self.keyWords[word] += 1
-        for keys, values in self.keyWords.items():
-            print(keys)
-            print(values)
+        #for keys, values in self.keyWords.items():
+            #print(keys)
+            #print(values)
 
 
     def calculate_TFIDF(self):
         '''
-        this function calculate the number of keywords appeared form the list
-        :param list:
-        :return:
-        '''
+                this function calculate the number of keywords appeared form the list
+                :param list:
+                :return:
+                '''
 
         numOfApearance = 0
         sum_of_frequencies = 0
@@ -194,19 +197,18 @@ class GeneralSearch:
         SearchClass = 0
         clientClass = ''
         for keys, values in self.keyWords.items():
-            if values > 0 :
+            if values > 0:
                 max_frequency = max(self.keyWords.values())
                 sum_of_frequencies += values
                 numOfApearance += 1
         try:
 
             SearchClass = ((numOfApearance * max_frequency) / (16))
-            #Normalization
+            # Normalization
             if SearchClass > 1:
                 SearchClass = 1
-        except ZeroDivisionError :
-            SearchClass =0
-
+        except ZeroDivisionError:
+            SearchClass = 0
 
         if 0.7 < SearchClass <= 1:
             clientClass = 'High'
@@ -217,21 +219,17 @@ class GeneralSearch:
         else:
             clientClass = 'Clean'
 
-
-        print('Number of Words apeared from the list', numOfApearance)
+        '''print('Number of Words apeared from the list', numOfApearance)
         print('MAX FREQUENCY',max_frequency)
         print('Frequeancy', sum_of_frequencies)
         print('SearchClass Weight', SearchClass)
         print('Client Class', clientClass)
         print('JSON Format')
-        print(self.cacheResult)
-        #with open("searchfiles/HajajAlajmi.json", "w") as write_file:
-            #json.dump(self.cacheResult, write_file)
+        print(self.cacheResult)'''
+        # with open("searchfiles/HajajAlajmi.json", "w") as write_file:
+        # json.dump(self.cacheResult, write_file)
 
-
-
-
-        #SAVING BEFORE CLEANING
+        # SAVING BEFORE CLEANING
 
         '''f = open("searchfiles/%s.txt" % (self.clientName), "w+")
         for each in self.tweets:
@@ -243,23 +241,24 @@ class GeneralSearch:
         date_now = datetime.now()
         formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
 
-        cur, db = connection2()
+        cur, db, engine = connection2()
 
-        #SAVING AFTER CLEANING
-        f = open("searchfiles/%s.txt" % (self.clientName), "w+")
-        for each in self.cleanText:
-            f.write(each+'\n')
+        # SAVING AFTER CLEANING
+        # f = open("searchfiles/%s.txt" % (self.clientName), "w+")
+        '''for each in self.cleanText:
+            #f.write(each+'\n')
             query = 'INSERT INTO generalSearch (searchDate, searchContent) VALUES(%s, %s)'
             val = (formatted_date, each)
-            cur.execute(query, val)
-        f.close()
+            cur.execute(query, val)'''
+        cur.execute("UPDATE SMI_DB.Client SET generalSearchDate= '%s', generalSearchResult= '%s' WHERE clientID='%s' " % (formatted_date, SearchClass, self.clientID))
+        # f.close()
         db.commit()
         cur.close()
         db.close()
+        return SearchClass, clientClass
 
 
 
 
 
-a = GeneralSearch('"حجاج العجمي"')
 

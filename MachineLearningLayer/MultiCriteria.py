@@ -1,9 +1,11 @@
 import pandas as pd
 from DBconnection import connection2 ,firebaseConnection
+from pandas import DataFrame
 import mysql.connector
 
 
 class MultiCriteria:
+
 
     def __init__(self):
 
@@ -20,25 +22,30 @@ class MultiCriteria:
         self.cur, self.db,self.engine = connection2()
 
         self.ADestID = []
+        '''
         self.ADestname = []
         self.Alocation = []
         self.Aamount = []
         self.Aavg = []
+        self.AtrnID = []
         self.suspiciousTransactions2= []
+        '''
 
-        self.cur.execute('SELECT clientID FROM bank_db.transaction')
-        record = list(set(list(self.cur.fetchall())))
-        for column in record:
-            query2 = ("SELECT * FROM bank_db.transaction WHERE clientID = '%s'" % (column[0]))
-            self.cur.execute(query2)
-            record2 = self.cur.fetchall()
-            for column2 in record2:
-                self.ADestID.append(column2[6])  # list with client id
-                self.Aamount.append(column2[2])  # amount
-                self.Aavg.append(column2[11])  # AvgAmountOfTransaction
-                self.Alocation.append(column2[12])
-                self.ADestname.append(column2[13])  # list with names
+        query2 = ("SELECT * FROM bank_db.transaction")
+        self.cur.execute(query2)
+        record2 = self.cur.fetchall()
+        self.df = DataFrame(record2)
+        self.df.columns = self.cur.column_names
 
+        for column2 in record2:
+            self.ADestID.append(column2[7])  # list with client id
+        '''
+            self.AtrnID.append(column2[0])
+            self.Aamount.append(column2[3])  # amount
+            self.Aavg.append(column2[12])  # AvgAmountOfTransaction
+            self.Alocation.append(column2[13])
+            self.ADestname.append(column2[14])  # list with names
+        '''
     '''
         This method takes a client name  and it checks that name in sanction_list if it was in the sanction
         list it returns one which means rule1 is satisfied
@@ -62,11 +69,13 @@ class MultiCriteria:
     '''
     def multi_criteria(self,nameDest): #will be sent from detect later on
         if nameDest in self.ADestID:
-            i = self.ADestID.index(nameDest)  # finding the location of the id will give us the location of the name.
-            filtered_df_ = pd.DataFrame({"nameDest": self.ADestID,"clientName": self.ADestname,
-                                         "location": self.Alocation, "amount": self.Aamount})
+            self.s=''
+           # filtered_df_ = pd.DataFrame({"nameDest": self.ADestID,"clientName": self.ADestname,
+                                        # "location": self.Alocation, "amount": self.Aamount, "transactionID": self.AtrnID})
+
            # filtered_df_ = pd.read_csv(filtered_df_, delimiter=',', encoding="utf-8")
-            filtered_df_ = filtered_df_[filtered_df_['nameDest'] == nameDest].drop_duplicates(keep='first')
+           # filtered_df_ = filtered_df_[filtered_df_['nameDest'] == nameDest].drop_duplicates(keep='first')
+            filtered_df_ = self.df[self.df['clientID'] == nameDest].drop_duplicates(keep='first')
 
             # business rule 1
             ''' client_risk is a col contains 0s and 1s '''
@@ -84,29 +93,62 @@ class MultiCriteria:
                 flag2 = 1
 
             # business rule 3
-            max_amount = filtered_df_['amount'].max()
-            avg_amount = filtered_df_['amount'].mean()
-            if max_amount > avg_amount*self.exceed_avg_tran:
+            self.max_amount = filtered_df_['amount'].max()
+            self.avg_amount = filtered_df_['amount'].mean()
+            if self.max_amount > (self.avg_amount*self.exceed_avg_tran):
                 flag3 = 1
-                self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == max_amount)]
-                self.cur.execute("SELECT * FROM SMI_DB.SuspiciousTransaction WHERE transactionID = %s;",filtered_df_['transactionID'])
-                record = self.cur.fetchall()
-                #if (record is None): # Dosen't exisit
-                    #query = "INSERT INTO SMI_DB.SuspiciousTransaction (userName, email, fullname, password, bank_id ) VALUES(%s,%s,%s,%s,%s)"
-                    #val = (form.username.data, form.email.data, form.fullName.data, form.password.data, 1)
-                    #cur.execute(query, val)
-
-
-
+                self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == self.max_amount)]
+                self.savingTransaction()
+                #print(self.suspiciousTransactions2['transactionID'],"***transactionID***")
             else:
                 flag3 = 0
 
             #business rule 4
-            if max_amount > self.amount:
+            if self.max_amount > self.amount:
                 flag4 = 1
+                if flag3 == 0:
+                    self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == self.max_amount)]
+                    self.savingTransaction()
+                #print(self.suspiciousTransactions2['transactionID'],"***transactionID***")
             else:
                 flag4 = 0
 
             sum_of_flags = (flag1 + flag2 + flag3 + flag4)/4
-           # print('sum of flags/4 is {} for nameDest as {}'.format(sum_of_flags, nameDest))
+            self.s=str(flag1)+str(flag2)+str(flag3)+str(flag4)
+            self.cur.execute("UPDATE SMI_DB.Client SET BR='%s' where clientID='%s'" % (self.s,nameDest))
+            self.db.commit()
+            #print(self.s)
             return sum_of_flags
+            #print('sum of flags/4 is {} for nameDest as {}'.format(sum_of_flags, nameDest))
+
+    def savingTransaction(self):
+            '''database'''
+            self.cur, self.db,self.engine = connection2()
+
+            query1 = ("SELECT * FROM SMI_DB.SuspiciousTransaction WHERE transactionID=  '%s'" % (self.suspiciousTransactions2['transactionID']))  # pre suspiciousTransactions2
+            self.cur.execute(query1)
+            record = self.cur.fetchall()
+            #print(record, "****record***")
+            if not record:  # Dosen't exisit
+                LOACTION = self.df['location']
+                NAMES = self.df['clientName']
+                transactionID = self.df['transactionID']
+                del self.df['location']
+                del self.df['clientName']
+                del self.df['transactionID']
+                self.df = self.df.rename(columns={'clientID': 'nameDest'})
+                self.df['isFruad_result'] = 1
+                self.df['location'] = LOACTION
+                self.df['clientName'] = NAMES
+                self.df['transactionID'] = transactionID
+                self.df = self.df.rename(columns={'nameDest': 'clientID'})
+
+                ### Save results  ####
+                self.df.to_csv('predictionsResults.csv', encoding='utf-8', index=False)
+
+                self.suspiciousTransactions2 = self.df.loc[(self.df.amount == self.max_amount)]  # reding form csv file
+                self.suspiciousTransactions2.to_csv('suspiciousTransactions.csv', encoding='utf-8', index=False)
+                self.suspiciousTransactions2.to_sql(name='SuspiciousTransaction', con=self.engine, if_exists='append', index=False)
+                #print("*****ADDDEDDD****")
+                self.db.commit()
+

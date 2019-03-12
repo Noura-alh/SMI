@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, session, abort, \
-    url_for, flash, redirect, session, jsonify,Markup
+    url_for, flash, redirect, session, jsonify,Markup, render_template_string
 from flaskext.mysql import MySQL
 from flask_paginate import Pagination, get_page_parameter
 from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, \
@@ -9,11 +9,13 @@ from passwordRecovery import passwordRecovery
 from MachineLearningLayer.Detect import Detection
 from datetime import datetime
 import configparser
-from celery import Celery
+from celery import Celery, current_task
 import random
 import time
 from flask_mail import Mail, Message
 import os
+from celery.result import AsyncResult
+import json
 
 
 app = Flask(__name__)
@@ -145,9 +147,9 @@ def register():
             flash('This Email is already registered please try another email', 'danger')
             return render_template('Register.html', form=form)
         else:
-            cur, db = connection2()
-            query = "INSERT INTO AMLOfficer (userName, email, fullname, password, bank_id ) VALUES(%s,%s,%s,%s,%s)"
-            val = (form.username.data, form.email.data, form.fullName.data, form.password.data, 1)
+            cur, db, engine = connection2()
+            query = "INSERT INTO AMLOfficer (userName, email, fullname, password ) VALUES(%s,%s,%s,%s)"
+            val = (form.username.data, form.email.data, form.fullName.data, form.password.data)
             cur.execute(query, val)
             db.commit()
             cur.close()
@@ -165,7 +167,7 @@ def forgotPass():
     form = forgotPassForm()
     if form.validate_on_submit():
         # Check id user exisit in the database
-        cur, db = connection2()
+        cur, db, engine = connection2()
         query = "SELECT * FROM SMI_DB.AMLOfficer WHERE email ='" + form.email.data + "'"
         cur.execute(query)
         data1 = cur.fetchone()
@@ -355,7 +357,7 @@ def DatabaseSetup():
             flash('Unable to connect please try again..', 'danger')
             return render_template("databaseSetup.html", form=form)
         else:
-            if isFB_Connected != 'false':
+            if isFB_Connected == 'false':
                 flash('Successfully connected to the database..Upload your business rules to start the analysis', 'success')
                 search_form = SearchForm()
                 form = manageBankDataForm()
@@ -441,59 +443,6 @@ def cases():
         return render_template("cases.html", cases=cases, form=form, form2=search_form, pagination=pagination,
                                css_framework='foundation', caseId=0)
 
-
-@celery.task(bind=True)
-def long_task(self):
-    D = Detection()
-    D.Detect()
-    """Background task that runs a long function with progress reports."""
-    verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
-    adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
-    noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
-    message = ''
-    total = random.randint(10, 50)
-    for i in range(total):
-        if not message or random.random() < 0.25:
-            message = '{0} {1} {2}...'.format(random.choice(verb),
-                                              random.choice(adjective),
-                                              random.choice(noun))
-        self.update_state(state='PROGRESS',
-                          meta={'current': i, 'total': total,
-                                'status': message})
-        time.sleep(1)
-    return {'current': 100, 'total': 100, 'status': 'Task completed!',
-            'result': 42}
-
-@app.route('/status/<task_id>')
-def taskstatus(task_id):
-    task = long_task.AsyncResult(task_id)
-    if task.state == 'PENDING':
-        # job did not start yet
-        response = {
-            'state': task.state,
-            'current': 0,
-            'total': 1,
-            'status': 'Pending...'
-        }
-    elif task.state != 'FAILURE':
-        response = {
-            'state': task.state,
-            'current': task.info.get('current', 0),
-            'total': task.info.get('total', 1),
-            'status': task.info.get('status', '')
-        }
-        if 'result' in task.info:
-            response['result'] = task.info['result']
-    else:
-        # something went wrong in the background job
-        response = {
-            'state': task.state,
-            'current': 1,
-            'total': 1,
-            'status': str(task.info),  # this is the exception raised
-        }
-    return jsonify(response)
-
 @app.route("/case/<id>", methods=['GET', 'POST'])
 def case(id):
     # Only logged in users can access bank profile
@@ -511,7 +460,7 @@ def case(id):
     data = cur.fetchall()
     client_ID = data[0][3]
     profileLabel=''
-    if data[0][1] == 'Low':#Need to change it Meduim
+    if data[0][1] == 'Medium':#Need to change it Meduim
         profileLabel ='label label-warning'
     else:#High
         profileLabel = 'label label-danger'
@@ -552,7 +501,87 @@ def caseTOprint(id):
 
     return render_template("caseTOprint.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction)
 
+######CELERY PART #########
+@app.route('/startAnalysis')
+def startAnalysis():
+    return render_template_string('''<a href="{{ url_for('enqueue') }}">start</a>''')
 
+@app.route('/enqueue')
+def enqueue():
+    task = Analysis.delay()
+    return render_template_string('''\
+<style>
+#prog {
+width: 400px;
+border: 1px solid red;
+height: 20px;
+}
+#bar {
+width: 0px;
+background-color: blue;
+height: 20px;
+}
+</style>
+<h3></h3>
+<div id="prog"><div id="bar"></div></div>
+<div id="pct"></div>
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+function poll() {
+    $.ajax("{{url_for('.progress', jobid=JOBID)}}", {
+        dataType: "json"
+        , success: function(resp) {
+            console.log(resp);
+            $("#pct").html(resp.progress);
+            $("#bar").css({width: $("#prog").width() * resp.progress});
+            if(resp.progress >= 0.9) {
+                $("#bar").css({backgroundColor: "green"});
+                return;
+            } else {
+                setTimeout(poll, 1000.0);
+            }
+        }
+    });
+}
+$(function() {
+    var JOBID = "{{ JOBID }}";
+    $("h3").html("JOB: " + JOBID);
+    poll();
+});
+</script>
+''', JOBID=task.id)
+@app.route('/progress')
+def progress():
+    jobid = request.values.get('jobid')
+    if jobid:
+        # GOTCHA: if you don't pass app=celery here,
+        # you get "NotImplementedError: No result backend configured"
+        job = AsyncResult(jobid, app=celery)
+        print (job.state)
+        print (job.result)
+        if job.state == 'PROGRESS':
+            return json.dumps(dict(
+                state=job.state,
+                progress=job.result['current']*1.0/job.result['total'],
+            ))
+        elif job.state == 'SUCCESS':
+            return json.dumps(dict(
+                state=job.state,
+                progress=1.0,
+            ))
+    return '{}'
+
+@celery.task
+def Analysis():
+    d = Detection()
+    d.Detect()
+
+    NTOTAL = 10
+    for i in range(NTOTAL):
+        time.sleep(random.random())
+        current_task.update_state(state='PROGRESS',
+                meta={'current':i,'total':NTOTAL})
+    return 999
 
 if __name__ == "__main__":
     app.run(debug=True)
