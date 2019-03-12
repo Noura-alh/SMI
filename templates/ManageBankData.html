@@ -227,10 +227,7 @@
     {% endwith %}
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Manage Bank Data
 
-      </h1>
       <ol class="breadcrumb">
         <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
           <li><a href="{{ url_for('bankP') }}">Profile</a></li>
@@ -264,29 +261,30 @@
             <form  action="{{ url_for('manageBankData') }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
               <div class="box-body">
-              <input type="radio" name="tab" value="igotnone" onclick="show1();" /> Use Template &ensp; &ensp; &ensp;
-                  <input type="radio" name="tab" value="igottwo" onclick="show2();" /> Upload Business Rules
+              <input type="radio" name="tab" value="igotnone" onclick="show1();" /> Upload Business Rules &ensp; &ensp; &ensp;
+                  <input type="radio" name="tab" value="igottwo" onclick="show2();" /> Business Rules Sample
                   <hr>
 
-                 <!-- Upload Business Rules code -->
+                 <!-- Business Rules Sample -->
                 <div  id="div1" style="display: none" >
                    <div class="form-group">
-                        {{ form.businessRules_file.label(class="col-md-3 control-label") }}
+
+                       <h4 class="col-md-3 control-label">Rule#1:</h4>
                    <div class="col-md-8">
                        <!-- Select input form -->
-                       {{ form.businessRules_file }}
+
                    <!--  <input type="file" id="exampleInputFile"  > -->
-                  <p class="help-block">file extention, .txt</p>
+
                     </div>
                       </div>
-                  <button class="btn btn-default" value="Delete" style="margin-left:85%; width:10%; tect-align:center;" >Delete</button>
+
 
                 </br>
                     <hr>
-                      <Button class="btn btn-default" value="Submit" style="margin-left:42%; width:20%; tect-align:center;">Submit</button>
+
                 </div>
 
-                   <!-- Template code -->
+                   <!-- Upload Business Rules -->
                    <div  style="display: none" id="div2">
                        <!-- For inserting black list names -->
                     <div class="form-group">

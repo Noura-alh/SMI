@@ -228,7 +228,7 @@ def manageBankData():
 
         if filename.split(".", 1)[1] != 'txt':
             flash('File extention should be txt', 'danger')
-            return render_template("ManageBankData.html", form=form)
+            return render_template("ManageBankData.html", form=form, form2=search_form)
 
         else:
             dest = "/".join([target, filename])
@@ -248,11 +248,13 @@ def manageBankData():
         db.child('Rule3').child('suspiciousTransaction').child('amount').set(amount)
         db.child('Rule4').child('blackList').set(sanction_list.read().splitlines())
 
-        if status == 1:
-            flash(Markup(
-                'You didn''t setup you''r database, please click <a href="/DatabaseSetup" class="alert-link">here</a> to setup '),
-                  'danger')
-        return redirect((url_for('manageBankData', form=form)))
+        if status == 1: # If upload BR and didn't set DB redirect to database setup
+            flash('Successfully uploaded your business rules..Setup your database connection to start the analysis', 'success')
+            form = dbSetupForm()
+            return render_template("databaseSetup.html", form=form)
+        #if status == 0
+
+        return redirect((url_for('manageBankData', form=form, form2=search_form)))
 
     if search_form.search_submit.data and search_form.validate_on_submit():
         return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
@@ -390,22 +392,6 @@ def Report(id):
 
         flash('Email has been sent Successfully..', 'success')
     return render_template("email.html", form = form, clientID= id)
-
-'''
-@app.route("/sendReport/<form>", methods=['GET', 'POST'])
-def sendReport(form):
-    print('Inside sendReport')
-    print(form.reciver.data)
-    recipient = form.reciver.data
-    msg = Message(form.subject.data, recipient.split())
-    msg.body = form.email_body.data
-    print(msg)
-
-    mail.send(msg)
-
-    flash('Email has been sent Successfully..', 'success')
-    return render_template("email.html", form=form) '''
-
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():
