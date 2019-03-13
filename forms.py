@@ -22,7 +22,6 @@ class forgotPassForm(FlaskForm):
    email = StringField('Email', validators=[DataRequired(), Email()])
    submit = SubmitField('Send')
 
-
 class bankProfileForm(FlaskForm):
    fullName = StringField('Full Name', validators=[DataRequired(), Length(min=2)])
    bankName = StringField('Bank Name', validators=[DataRequired()])
@@ -30,7 +29,7 @@ class bankProfileForm(FlaskForm):
    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
    confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-   submit = SubmitField('Save Changes')
+   profile_submit = SubmitField('Save Changes')
    delete = SubmitField('Delete Profile')
    cancel = SubmitField('Cancel')
 
@@ -132,7 +131,8 @@ class manageBankDataForm(FlaskForm):
    bank_submit = SubmitField('submit')
 
 
-
+class ViewProfileForm(FlaskForm):
+    view_submit = SubmitField('View Profile')
 
 
 

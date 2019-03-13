@@ -8,7 +8,6 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
 
-
     <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
   <!-- Font Awesome -->
@@ -41,10 +40,9 @@
     <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
 
-      <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
 
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
+           <span class="logo-lg">  <img  height="50" width="95" src="{{url_for('static', filename='dist/img/newl.png')}}"alt="User Image"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -88,14 +86,13 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
+
 
               <span class="hidden-xs">{{ session['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
 
                 <p>
@@ -121,76 +118,64 @@
       </div>
     </nav>
   </header>
+
   <!-- Left side column. contains the logo and sidebar -->
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
-
-        </div>
-        <div class="pull-left info">
-          <p>{{ session['username'] }}i</p>
-          <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
-        </div>
-      </div>
-
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
 
         <li class="treeview">
-          <a href="#">
-            <i class="fa fa-search"></i> <span>Search For Client</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-
-              <form action="#" method="get" class="sidebar-form">
+           <a> <i class="fa fa-search"></i> <span>Search For Client</span>
+              </a>
+                <!-- search form -->
+              <form action="#" method="post" class="sidebar-form" role="form">
+                   {{ form2.hidden_tag() }}
               <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                    <span class="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                      </button>
-                    </span>
+                   {{ form2.search( class="form-control")  }}
+
+                        {{ form2.search_submit(class="btn btn-primary btn-block btn-flat input-group-btn") }}
+                        <!-- <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button> -->
               </div>
             </form>
-          </a>
+
         </li>
 
 
         <li>
           <a href="{{ url_for('home') }}">
             <i class="fa fa-home"></i> <span>Home</span>
-            <span class="pull-right-container">
 
+          </a>
+        </li>
+
+
+             <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i> <span>Manage Bank Data</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
+          <ul class="treeview-menu">
+           <li><a href="{{ url_for('DatabaseSetup') }}"> Database Setup</a></li>
+            <li><a href="{{ url_for('manageBankData') }}">business Rules Setup</a></li>
+
+          </ul>
         </li>
         <li>
           <a href="{{ url_for('manageProfile') }}">
           <span>Manage Profile</span>
-            <span class="pull-right-container">
-
-            </span>
           </a>
         </li>
 
 
-        <li>
-          <a href="ManageBankData.html">
-          <span>Manage Bank Data</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
-        </li>
-
-
-        <li>
-          <a href="cases.html">
+          <li>
+           <a href="{{ url_for('cases') }}">
           <span>View Cases</span>
             <span class="pull-right-container">
 
@@ -198,12 +183,10 @@
           </a>
         </li>
 
-
       </ul>
     </section>
     <!-- /.sidebar -->
   </aside>
-
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
        {% with messages = get_flashed_messages(with_categories=true) %}
@@ -221,9 +204,8 @@
     <div class="container">
 
       <section class="content-header">
-
         <ol class="breadcrumb">
-          <li><a href="{{ url_for('logout') }}"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
           <li><a href="{{ url_for('bankP') }}">Profile</a></li>
           <li class="active">Manage Profile</li>
         </ol>
@@ -232,72 +214,167 @@
     <h1>Manage Profile</h1>
 	<div class="row">
       <!-- left column -->
-      <div class="col-md-3">
-        <div class="text-center">
-          <img  src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="avatar img-circle" alt="avatar" width="70" height="80">
 
-
-          <h6>Upload a photo</h6>
-
-          <input type="file" class="form-control">
-        </div>
-      </div>
 
       <!-- edit form column -->
 
       <div class="col-md-9 personal-info">
         <h3 style="color:#004D40;"> <b> Personal info</b></h3>
+      <br>
 
             <div class = "form-horizontal">
-           <form action="/ManageProfile" method="post">
+           <form action="" method="post">
     {{ form.hidden_tag() }}
     <!-- drop down list here-->
+           <!-- Full Name -->
       <div class="form-group has-feedback">
           {{ form.fullName.label(class="col-lg-3 form-control-label") }}
 
                     {% if form.fullName.errors %}
-                        {{ form.fullName(class="form-control form-control-lg is-invalid") }}
+                         <div class="col-lg-8">
+                        {{ form.fullName(class="form-control form-control-lg") }}
+
                         <div class="invalid-feedback">
                             {% for error in form.fullName.errors %}
                                 <span style="color: red;">{{ error }}</span>
                             {% endfor %}
+                          </div>
                         </div>
                     {% else %}
-                        <div class="col-lg-8">
+                          <div class="col-lg-8">
                         {{ form.fullName(class="form-control form-control-lg") }}
-                        </div>
+                          </div>
                     {% endif %}
+
       </div>
-      <div class="form-group has-feedback">
-         {{ form.password.label(class="form-control-label") }}
+                    <!-- Bank name -->
+               <div class="form-group has-feedback">
+          {{ form.bankName.label(class="col-lg-3 form-control-label") }}
+
+                    {% if form.bankName.errors %}
+                         <div class="col-lg-8">
+                        {{ form.bankName(class="form-control form-control-lg") }}
+
+                        <div class="invalid-feedback">
+                            {% for error in form.bankName.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                        </div>
+                    {% else %}
+                          <div class="col-lg-8">
+                        {{ form.bankName(class="form-control form-control-lg") }}
+                          </div>
+                    {% endif %}
+                         </div>
+
+
+           <!-- Email -->
+            <div class="form-group has-feedback">
+          {{ form.email.label(class="col-lg-3 form-control-label") }}
+
+                    {% if form.email.errors %}
+                         <div class="col-lg-8">
+                        {{ form.email(class="form-control form-control-lg") }}
+
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                        </div>
+                    {% else %}
+                          <div class="col-lg-8">
+                        {{ form.email(class="form-control form-control-lg") }}
+                          </div>
+                    {% endif %}
+                         </div>
+
+           <!-- UserName -->
+             <div class="form-group has-feedback">
+          {{ form.username.label(class="col-lg-3 form-control-label") }}
+
+                    {% if form.username.errors %}
+                         <div class="col-lg-8">
+                        {{ form.username(class="form-control form-control-lg") }}
+
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                        </div>
+                    {% else %}
+                          <div class="col-lg-8">
+                        {{ form.username(class="form-control form-control-lg") }}
+                          </div>
+                    {% endif %}
+                         </div>
+
+                <!-- Password -->
+              <div class="form-group has-feedback">
+          {{ form.password.label(class="col-lg-3 form-control-label") }}
+
                     {% if form.password.errors %}
-                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                         <div class="col-lg-8">
+                        {{ form.password(class="form-control form-control-lg") }}
+
                         <div class="invalid-feedback">
                             {% for error in form.password.errors %}
                                 <span style="color: red;">{{ error }}</span>
                             {% endfor %}
                         </div>
+                        </div>
                     {% else %}
+                        <div class="col-lg-8">
                         {{ form.password(class="form-control form-control-lg") }}
+                        </div>
                     {% endif %}
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
-      <div class="row">
 
+           <!-- Confirm password -->
+            <div class="form-group has-feedback">
+          {{ form.confirm_password.label(class="col-lg-3 form-control-label") }}
+
+                    {% if form.confirm_password.errors %}
+                         <div class="col-lg-8">
+                        {{ form.confirm_password(class="form-control form-control-lg") }}
+
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_password.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    {% else %}
+                        <div class="col-lg-8">
+                        {{ form.confirm_password(class="form-control form-control-lg") }}
+                        </div>
+                    {% endif %}
+                    </div>
+
+
+
+      <div class="row">
         <!-- /.col -->
-        <div class="col-xs-6" style="margin-left:25%">
-            {{ form.submit(class="btn btn-primary btn-block btn-flat") }}
+        <div class="col-xs-5" style="margin-left:40%">
+            {{ form.profile_submit(class="btn btn-primary btn-block btn-flat") }}
+          <br>
+            <a href='/deleteProfile' class="btn btn-danger" onclick="myFunction()" style="margin-left: 33%" >Delete Account</a>
+
         </div>
 
 
-
+<script>
+function myFunction() {
+  confirm("Are you sure you want to delete you'r profile?");
+}
+</script>
 
         <!-- /.col -->
       </div>
         </br>
-      <div style="margin-left:32%;">
-      <a href={{url_for('forgotPass') }}>Forgot Your Password ?</a><br>
-    </div>
+
     </form>
             </div>
       </div>
@@ -309,7 +386,6 @@
 
   <!-- /.content-wrapper -->
   <!--  <footer class="main-footer">
-
   </footer>-->
 
   <!-- Control Sidebar -->

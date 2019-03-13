@@ -1,5 +1,5 @@
 from MachineLearningLayer.DT import DecisionTree
-from DBconnection import BankConnection
+from DBconnection import BankConnection ,firebaseConnection
 from DBconnection import connection2
 from datetime import datetime
 from MachineLearningLayer.GeneralSearch import GeneralSearch
@@ -14,6 +14,14 @@ class Detection:
 
         status, cur2, db2, engine2 = BankConnection() #bank_DB
 
+        '''Firebase'''
+        firebase = firebaseConnection()
+        db = firebase.database()
+
+        self.risk_countries = db.child('Rule1').child('highRiskCountries').get().val()
+        self.sanction_list = db.child('Rule4').child('blackList').get().val()
+        self.exceed_avg_tran = db.child('Rule2').child('exceedingAvgTransaction').get().val()
+        self.amount = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
 
         '''df = pd.read_csv('GeneratedDataset.csv')
         df.to_sql(name='transaction', con=engine2, if_exists='append',
@@ -50,7 +58,7 @@ class Detection:
             NumberOfRecord = 0
             weightTree = 0.5
             mc = MultiCriteria()
-            mc_class = mc.multi_criteria(id)
+            mc_class = mc.multi_criteria(id,self.risk_countries,self.sanction_list,self.exceed_avg_tran,self.amount)
 
             # If the client has any suspsuoius transaction run general search
             if any(name in s for s in suspsuoiusClient):

@@ -196,14 +196,20 @@ def bankP():
 @app.route("/ManageProfile", methods=['GET', 'POST'])
 def manageProfile():
     form = bankProfileForm()
-    # Only logged in users can access bank profile
+    search_form = SearchForm()
+    username = session.get('username')
     if session.get('username') == None:
         return redirect(url_for('home'))
 
-    if form.validate_on_submit():
-        flash('Great','success')
+    if form.profile_submit.data and form.validate_on_submit():
+        cur, db , engine = connection2()
+        cur.execute("UPDATE SMI_DB.AMLOfficer SET fullname = '" + form.fullName.data + "' , email = '" + form.email.data + "' , userName = '" + form.username.data + "', password = '" + form.password.data + "' WHERE userName = '" + username + "'" )
+        db.commit()
 
-    return render_template("ManageProfile.html", form = form)
+    if search_form.search_submit.data and search_form.validate_on_submit():
+        return redirect((url_for('searchResult', id= search_form.search.data , form2 = search_form )))
+
+    return render_template("ManageProfile.html", form=form , form2 = search_form )
 
 
 @app.route("/ManageBankData", methods=['GET', 'POST'])
@@ -509,47 +515,17 @@ def startAnalysis():
 @app.route('/enqueue')
 def enqueue():
     task = Analysis.delay()
-    return render_template_string('''\
-<style>
-#prog {
-width: 400px;
-border: 1px solid red;
-height: 20px;
-}
-#bar {
-width: 0px;
-background-color: blue;
-height: 20px;
-}
-</style>
-<h3></h3>
-<div id="prog"><div id="bar"></div></div>
-<div id="pct"></div>
-<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-<script>
-function poll() {
-    $.ajax("{{url_for('.progress', jobid=JOBID)}}", {
-        dataType: "json"
-        , success: function(resp) {
-            console.log(resp);
-            $("#pct").html(resp.progress);
-            $("#bar").css({width: $("#prog").width() * resp.progress});
-            if(resp.progress >= 0.9) {
-                $("#bar").css({backgroundColor: "green"});
-                return;
-            } else {
-                setTimeout(poll, 1000.0);
-            }
-        }
-    });
-}
-$(function() {
-    var JOBID = "{{ JOBID }}";
-    $("h3").html("JOB: " + JOBID);
-    poll();
-});
-</script>
-''', JOBID=task.id)
+    form2 = SearchForm()
+    return render_template('analysisView.html', JOBID=task.id, form2=form2)
+
+
+@app.route('/analysisView')
+def analysisView():
+    form2 =SearchForm()
+
+    return render_template("analysisView.html",form2= form2)
+
+
 @app.route('/progress')
 def progress():
     jobid = request.values.get('jobid')

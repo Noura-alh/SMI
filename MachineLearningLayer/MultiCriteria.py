@@ -9,15 +9,6 @@ class MultiCriteria:
 
     def __init__(self):
 
-        '''Firebase'''
-        firebase = firebaseConnection()
-        db = firebase.database()
-
-        self.risk_countries = db.child('Rule1').child('highRiskCountries').get().val()
-        self.sanction_list = db.child('Rule4').child('blackList').get().val()
-        self.exceed_avg_tran = db.child('Rule2').child('exceedingAvgTransaction').get().val()
-        self.amount = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
-
         '''database'''
         self.cur, self.db,self.engine = connection2()
 
@@ -67,14 +58,11 @@ class MultiCriteria:
     ''' 
             loop to check the 4 rules for each client and calculate its risk
     '''
-    def multi_criteria(self,nameDest): #will be sent from detect later on
+    def multi_criteria(self,nameDest,risk_countries,sanction_list,exceed_avg_tran,amount): #will be sent from detect later on
+        self.risk_countries=risk_countries
+        self.sanction_list=sanction_list
         if nameDest in self.ADestID:
             self.s=''
-           # filtered_df_ = pd.DataFrame({"nameDest": self.ADestID,"clientName": self.ADestname,
-                                        # "location": self.Alocation, "amount": self.Aamount, "transactionID": self.AtrnID})
-
-           # filtered_df_ = pd.read_csv(filtered_df_, delimiter=',', encoding="utf-8")
-           # filtered_df_ = filtered_df_[filtered_df_['nameDest'] == nameDest].drop_duplicates(keep='first')
             filtered_df_ = self.df[self.df['clientID'] == nameDest].drop_duplicates(keep='first')
 
             # business rule 1
@@ -95,7 +83,7 @@ class MultiCriteria:
             # business rule 3
             self.max_amount = filtered_df_['amount'].max()
             self.avg_amount = filtered_df_['amount'].mean()
-            if self.max_amount > (self.avg_amount*self.exceed_avg_tran):
+            if self.max_amount > (self.avg_amount*exceed_avg_tran):
                 flag3 = 1
                 self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == self.max_amount)]
                 self.savingTransaction()
@@ -104,7 +92,7 @@ class MultiCriteria:
                 flag3 = 0
 
             #business rule 4
-            if self.max_amount > self.amount:
+            if self.max_amount > amount:
                 flag4 = 1
                 if flag3 == 0:
                     self.suspiciousTransactions2 = filtered_df_.loc[(filtered_df_['amount'] == self.max_amount)]
