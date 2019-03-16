@@ -6,23 +6,13 @@
   <title> SMI | Case</title>
   <!-- Tell the browser to be responsive to screen width -->
   <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
 
-      <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
-
-  <!-- Font Awesome -->
-
-  <link href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
-
-  <!-- Theme style -->
-
-  <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
-
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-   <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
-
+     <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -31,71 +21,6 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
        <!-- Google Translate Element begin -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en', includedLanguages: 'en,ar',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <style type="text/css">
-        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
-        div#google_translate_element div.goog-te-gadget-simple {
-            border: none;
-            background-color: transparent;
-            /*background-color: #17548d;*/ /*#e3e3ff*/
-        }
-
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
-            text-decoration: none;
-        }
-
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
-            color: #aaa;
-        }
-
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
-            color: white;
-        }
-
-        .goog-te-gadget-icon {
-            display: none !important;
-            /*background: url("url for the icon") 0 0 no-repeat !important;*/
-        }
-
-        /* Remove the down arrow */
-        /* when dropdown open */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
-            display: none;
-        }
-        /* after clicked/touched */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(118, 118, 118);"] {
-            display: none;
-        }
-        /* on page load (not yet touched or clicked) */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
-            display: none;
-        }
-
-        /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
-            display: none;
-        }
-        /* Remove span with left border line | (next to the arrow) in Edge & IE11 */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left-color: rgb(187, 187, 187); border-left-width: 1px; border-left-style: solid;"] {
-            display: none;
-        }
-        /* HIDE the google translate toolbar */
-        .goog-te-banner-frame.skiptranslate {
-            display: none !important;
-        }
-        body {
-            top: 0px !important;
-        }
-        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */
-    </style>
                <!-- End Translation code -->
 
   <!-- Google Font -->
@@ -106,7 +31,6 @@
       <div class="wrapper"  >
 
         <header class="main-header">
-
         </header>
 
 
@@ -122,7 +46,7 @@
 
 
           <h3 class="notranslate">
-              <label class="{{label }}" class="profile-username text-center">{{ data[0][1] }}</label> &nbsp; {{ data2[0][1] }}</h3>
+              <label class="{{ label }}" class="profile-username text-center">{{ label_name }}</label> Risk &nbsp; {{ clientName }}</h3>
 
 
         </br>
@@ -132,12 +56,12 @@
             <strong>Case Number</strong>
 
             <p class="text-muted">
-            #{{ data[0][0] }}
+            #{{ caseNumber }}
             </p>
                <strong>Date of the case</strong>
 
             <p class="text-muted">
-            {{ data[0][2] }}
+            {{ caseDate }}
             </p>
             <hr>
               <strong>Suspicious Transactions</strong>
@@ -145,7 +69,7 @@
 
             <div class="box-body table-responsive no-padding">
 
-              <table class="table table-hover">
+              <table style="width:100%" class="table table-hover">
 
                 <tr>
                   <th>Transaction Number </th>
@@ -154,27 +78,23 @@
                     <th>Location of Transaction </th>
                   <th>Old Balance</th>
                   <th>New Balance</th>
-
-
+                    <br>
 
                 </tr>
-                   {% for each in transaction %}
+
                 <tr>
-                  <td>{{ each[15] }}</td>
-                    {% if  each[1]  == 0 %}
+                  <td>{{ transaction_number  }}</td>
+                    {% if  transaction_type  == 0 %}
                     <td> Transfer </td>
                       {% endif %}
-                   {% if  each[1]  == 1 %}
+                   {% if transaction_type == 1 %}
                     <td> Cash out </td>
                       {% endif %}
-
-
-                  <td>{{ each[2] }}$</td>
-                  <td>{{ each[13] }}</td>
-                  <td>{{ each[7] }}$</td>
-                <td>{{ each[8] }}$</td>
+                  <td>{{ transaction_amount }}$</td>
+                  <td>{{ transaction_location }}</td>
+                  <td>{{ old_balance}}$</td>
+                <td>{{ new_balance }}$</td>
                 </tr>
-                  {% endfor %}
 
 
               </table>
@@ -192,37 +112,22 @@
 
       </div>
 
-
-
+    </div>
 
       <!-- /.box -->
   </section>
+  </div>
+      </div>
         <!-- /. box -->
-
-
-
   <!-- Control Sidebar -->
 
   <!-- /.control-sidebar -->
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
-</div>
+
 <!-- ./wrapper -->
 
-<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
-
-
-
-<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-
-
-
-<script src="{{ url_for('static', filename='bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
-
-
-
-<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
 
 </body>
 </html>

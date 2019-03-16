@@ -65,7 +65,7 @@
            <span class="logo-mini"  ><img  height="45" width="38" src="{{url_for('static', filename='dist/img/slogo.png')}}"  alt="User Image"></span>
 
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">  <img  height="42" width="130" src="{{url_for('static', filename='dist/img/newlogo.png')}}"alt="User Image"></span>
+     <span class="logo-lg">  <img  height="50" width="95" src="{{url_for('static', filename='dist/img/newl.png')}}"alt="User Image"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -109,13 +109,11 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
                <span class="hidden-xs">{{ session['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
                 <p>
                  {{ session['username'] }}
@@ -145,27 +143,15 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
-
-        </div>
-        <div class="pull-left info">
-          <p>{{ session['username'] }}</p>
-          <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
-        </div>
-      </div>
-
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
 
         <li class="treeview">
-          <a href="#">
-            <a><i class="fa fa-search"></i> <span>Search For Client</span></a>
-
-     <!-- search form -->
-              <form action="" method="post" class="sidebar-form" role="form">
+           <a> <i class="fa fa-search"></i> <span>Search For Client</span>
+              </a>
+                <!-- search form -->
+              <form action="#" method="post" class="sidebar-form" role="form">
                    {{ form2.hidden_tag() }}
               <div class="input-group">
                    {{ form2.search( class="form-control")  }}
@@ -176,7 +162,6 @@
               </div>
             </form>
 
-          </a>
         </li>
 
 
@@ -187,14 +172,8 @@
           </a>
         </li>
 
-        <li>
-          <a href="{{ url_for('manageProfile') }}">
-          <span>Manage Profile</span>
-          </a>
-        </li>
 
-
-       <li class="treeview">
+             <li class="treeview">
           <a href="#">
             <i class="fa fa-edit"></i> <span>Manage Bank Data</span>
             <span class="pull-right-container">
@@ -202,13 +181,19 @@
             </span>
           </a>
           <ul class="treeview-menu">
-           <li><a href="{{ url_for('DatabaseSetup') }}"><i class="fa fa-circle-o"></i> Database Setup</a></li>
-            <li><a href="{{ url_for('manageBankData') }}"><i class="fa fa-circle-o"></i>business Rules Setup</a></li>
+           <li><a href="{{ url_for('DatabaseSetup') }}"> Database Setup</a></li>
+            <li><a href="{{ url_for('manageBankData') }}">business Rules Setup</a></li>
 
           </ul>
         </li>
-
         <li>
+          <a href="{{ url_for('manageProfile') }}">
+          <span>Manage Profile</span>
+          </a>
+        </li>
+
+
+          <li>
            <a href="{{ url_for('cases') }}">
           <span>View Cases</span>
             <span class="pull-right-container">
@@ -251,7 +236,6 @@
             <div class="box-body table-responsive no-padding">
              <form  action="{{ url_for('cases') }}" method="post" role="form">
               {{ form.hidden_tag() }}
-             {{ pagination.info }}
               <table class="table table-hover">
                 <tr>
                   <th>Case Id</th>
@@ -266,16 +250,16 @@
                      <td> {{ case[1] }}</td>
                      <td> {{ case[2] }}</td>
                     <td>
-
-                        <button type="submit" class="btn btn-primary btn-sm" name="caseView" value="{{ case[0] }}">View Case</button>
-                        <a href= '/download/{{ case[0] }} ' class="btn btn-primary" > <i class="fa fa-save"></i></a>
+                        <button type="submit" class="btn btn-default btn-sm" name="caseView" value="{{ case[0] }}">View Case</button>
+                        <a href= '/download/{{ case[0] }}' class="btn btn-default" > <i class="fa fa-save"></i></a>
                     </td>
                 {% endfor %}
 
               </table>
 
 
-                <div style="margin-left: 37%">
+                <div style="margin-left: 20%">
+
              {{ pagination.links }}
             </div>
 

@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, session, abort, \
-    url_for, flash, redirect, session, jsonify,Markup, render_template_string
+    url_for, flash, redirect, session, jsonify,Markup, render_template_string,make_response
 from flaskext.mysql import MySQL
 from flask_paginate import Pagination, get_page_parameter
 from forms import RegistrationForm, LoginForm, forgotPassForm, bankProfileForm, \
@@ -16,6 +16,7 @@ from flask_mail import Mail, Message
 import os
 from celery.result import AsyncResult
 import json
+import pdfkit
 
 
 app = Flask(__name__)
@@ -385,16 +386,80 @@ def Report(id):
     if session.get('username') == None:
         return redirect(url_for('home'))
     form = reportCase()
-    print('Inside Report')
-    print(form.reciver.data)
+    cur, db, engine = connection2()
+    cur.execute("SELECT * FROM SMI_DB.ClientCase WHERE caseID=%s " % (id))
+    record = cur.fetchall()
+    client_ID = record[0][3]
+    caseNumber = ''
+    caseDate = ''
+
+    for each1 in record:
+        caseNumber = each1[0]
+        caseDate = each1[2]
+
+    profileLabel = ''
+    if record[0][1] == 'Low':  # Need to change it Meduim
+        profileLabel = 'label label-warning'
+    else:  # High
+        profileLabel = 'label label-danger'
+    label_name = record[0][1]
+
+    # --------------------#----------------------#--------------------------#-------------#
+
+    query1 = "SELECT * FROM SMI_DB.SuspiciousTransaction WHERE clientID=%s " % (client_ID)
+    cur.execute(query1)
+    record1 = cur.fetchall()
+    transaction_number = ''
+    transaction_type = ''
+    transaction_amount = ''
+    transaction_location = ''
+    old_balance = ''
+    new_balance = ''
+
+    for each in record1:
+        transaction_number = each[15]
+        transaction_type = each[1]
+        transaction_amount = each[2]
+        transaction_location = each[13]
+        old_balance = each[7]
+        new_balance = each[8]
+
+    query2 = "SELECT * FROM SMI_DB.Client WHERE clientID=%s " % (client_ID)
+    cur.execute(query2)
+    record2 = cur.fetchall()
+    clientName = ''
+    for each in record2:
+        clientName = each[1]
+
+    rendered = render_template('CaseToPrint.html', clientName=clientName, caseNumber=caseNumber, caseDate=caseDate,
+                               label=profileLabel, label_name=label_name, transaction_number=transaction_number,
+                               transaction_type=transaction_type, transaction_amount=transaction_amount,
+                               transaction_location=transaction_location,
+                               old_balance=old_balance, new_balance=new_balance)
+    #######save case to working dierctory ##########
+    pdfFile = pdfkit.from_string(rendered, 'case.pdf')
+    #request.files.get('file_case') = pdfFile
+    #request.form['file_case'] = pdfFile
+    form.subject.data = 'Case#{}_{}'.format(id,clientName)
+    form.email_body.data = 'Fruad Report'
+
     if form.validate_on_submit():
-        #print('Calling sendReport')
-        #return redirect((url_for('sendReport', form=form)))
-        print('Inside sendReport')
-        print(form.reciver.data)
+        '''target = os.path.join(APP_ROOT, 'Case_file/')
+        print('target',target)
+        if not os.path.isdir(target):
+            os.mkdir(target)
+        file = request.files.get('file_case')
+        print('file',file)
+        filename = file.filename
+        print('fileNAME',filename)
+        dest = "/".join([target, filename])
+        print(dest)
+        file.save(dest)'''
         recipient = form.reciver.data
         msg = Message(form.subject.data, recipient.split())
         msg.body = form.email_body.data
+        with app.open_resource("case.pdf") as fp:
+            msg.attach("case.pdf", "case/pdf", fp.read())
         print(msg)
         mail.send(msg)
 
@@ -403,12 +468,16 @@ def Report(id):
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():
+    # Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+
     search = False
     q = request.args.get('q')
     if q:
         search = True
 
-    cur, db, engine = connection2()
+    cur, db , engine = connection2()
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
@@ -428,31 +497,22 @@ def cases():
         if search_form.search_submit.data and search_form.validate_on_submit():
             return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
 
-        if form.validate_on_submit():
-            # id = form.hidden.data
-            # id = request.form.get('case_submit')
+
+        if  form.validate_on_submit():
+            #id = form.hidden.data
+            #id = request.form.get('case_submit')
             id = request.form['caseView']
-            # id2 = request.form['caseDownload']
+            #id2 = request.form['caseDownload']
             print(id)
-            return redirect((url_for('case', id=id)))
+            return redirect((url_for('case' , id = id)))
 
-        pagination = Pagination(page=page, per_page=per_page, total=len(total), offset=offset, search=search,
-                                record_name='cases', css_framework='bootstrap3')
-        # 'page' is the default name of the page parameter, it can be customized
-        # e.g. Pagination(page_parameter='p', ...)
-        # or set PAGE_PARAMETER in config file
-        # also likes page_parameter, you can customize for per_page_parameter
-        # you can set PER_PAGE_PARAMETER in config file
-        # e.g. Pagination(per_page_parameter='pp')
-        # , pagination=pagination
+        pagination = Pagination(page=page,per_page = per_page, total= len(total) ,offset = offset , search=search, record_name='cases' , css_framework='bootstrap3')
 
-        return render_template("cases.html", cases=cases, form=form, form2=search_form, pagination=pagination,
-                               css_framework='foundation', caseId=0)
+        return render_template("cases.html", cases = cases, form=form , form2 = search_form  , pagination=pagination ,css_framework='foundation', caseId = 0)
 
 @app.route("/case/<id>", methods=['GET', 'POST'])
 def case(id):
     # Only logged in users can access bank profile
-
     if session.get('username') == None:
         return redirect(url_for('home'))
     search_form = SearchForm()
@@ -558,6 +618,69 @@ def Analysis():
         current_task.update_state(state='PROGRESS',
                 meta={'current':i,'total':NTOTAL})
     return 999
+
+@app.route('/download/<id>', methods=['GET','POST'])
+def download(id):
+    cur, db, engine = connection2()
+    query = "SELECT * FROM SMI_DB.ClientCase WHERE caseID = '" + id + "'"
+    cur.execute(query)
+    record = cur.fetchall()
+    client_ID = record[0][3]
+    caseNumber = ''
+    caseDate = ''
+
+    for each1 in record:
+        caseNumber = each1[0]
+        caseDate = each1[2]
+
+    profileLabel = ''
+    if record[0][1] == 'Low':  # Need to change it Meduim
+        profileLabel = 'label label-warning'
+    else:  # High
+        profileLabel = 'label label-danger'
+    label_name = record[0][1]
+
+    # --------------------#----------------------#--------------------------#-------------#
+
+    query1 = "SELECT * FROM SMI_DB.SuspiciousTransaction WHERE clientID=%s " % (client_ID)
+    cur.execute(query1)
+    record1 = cur.fetchall()
+    transaction_number = ''
+    transaction_type = ''
+    transaction_amount = ''
+    transaction_location = ''
+    old_balance = ''
+    new_balance = ''
+
+    for each in record1:
+        transaction_number = each[15]
+        transaction_type = each[1]
+        transaction_amount = each[2]
+        transaction_location = each[13]
+        old_balance = each[7]
+        new_balance = each[8]
+
+    query2 = "SELECT * FROM SMI_DB.Client WHERE clientID=%s " % (client_ID)
+    cur.execute(query2)
+    record2 = cur.fetchall()
+    clientName = ''
+    for each in record2:
+        clientName = each[1]
+
+    rendered = render_template('CaseToPrint.html', clientName=clientName, caseNumber=caseNumber, caseDate=caseDate,
+                               label=profileLabel, label_name=label_name, transaction_number=transaction_number,
+                               transaction_type=transaction_type, transaction_amount=transaction_amount,
+                               transaction_location=transaction_location,
+                               old_balance=old_balance, new_balance=new_balance)
+
+    pdf = pdfkit.from_string(rendered, False)
+    #######save case to working dierctory ##########
+    #pdfkit.from_string(rendered, 'case.pdf')
+
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=case.pdf'
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)
