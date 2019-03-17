@@ -47,8 +47,6 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-    <script src="path/to/jquery.progresstimer.js"></script>
-
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -298,6 +296,8 @@
 
 <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
 
+<script src="{{ url_for('static', filename='jquery.progresstimer.js') }}"></script>
+
 
 <script>
     var progress = $(".loading-progress").progressTimer({
@@ -319,7 +319,6 @@ $.ajax({
 }).done(function(){
   progress.progressTimer('complete');
 });
-
 </script>
 
 </body>

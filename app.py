@@ -493,6 +493,7 @@ def cases():
         total = cur.fetchall()
         cur.execute("SELECT * FROM SMI_DB.ClientCase ORDER BY caseID DESC LIMIT %s OFFSET %s", (per_page, offset))
         cases = cur.fetchall()
+        countCases = len(cases)
 
         if search_form.search_submit.data and search_form.validate_on_submit():
             return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
@@ -508,7 +509,7 @@ def cases():
 
         pagination = Pagination(page=page,per_page = per_page, total= len(total) ,offset = offset , search=search, record_name='cases' , css_framework='bootstrap3')
 
-        return render_template("cases.html", cases = cases, form=form , form2 = search_form  , pagination=pagination ,css_framework='foundation', caseId = 0)
+        return render_template("cases.html", cases = cases, form=form , form2 = search_form  , pagination=pagination ,css_framework='foundation', caseId = 0, countCases= countCases)
 
 @app.route("/case/<id>", methods=['GET', 'POST'])
 def case(id):
@@ -533,11 +534,26 @@ def case(id):
 
     cur.execute("SELECT * FROM SMI_DB.Client WHERE clientID=%s " % ( client_ID))
     data2 = cur.fetchall()
+    client_BR = data2[0][5]
+    Br_flag = True
+    print('Br', client_BR)
+    Br_dic = {}
+    if client_BR == '0000':
+        Br_flag = False
+    else:
+        if client_BR[0] == '1':
+            Br_dic['1'] = 'Client Name is in sanction list'
+        if client_BR[1] == '1':
+            Br_dic['2'] = 'Client location in risk contries'
+        if client_BR[2] == '1':
+            Br_dic['3'] = 'Client exceeded avg amount of transactions'
+        if client_BR[3] == '1':
+            Br_dic['4'] = 'Client exceeded max amount of transaction'
 
     cur.execute("SELECT * FROM SuspiciousTransaction WHERE clientID=%s " % (client_ID))
     transaction = cur.fetchall()
 
-    return render_template("case.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction)
+    return render_template("case.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction, Br_flag=Br_flag ,Br_dic=Br_dic)
 
 @app.route("/caseTOprint/<id>", methods=['GET', 'POST'])
 def caseTOprint(id):
@@ -567,57 +583,6 @@ def caseTOprint(id):
 
     return render_template("caseTOprint.html",data= data, data2= data2, label= profileLabel, clientId = id, transaction=transaction)
 
-######CELERY PART #########
-@app.route('/startAnalysis')
-def startAnalysis():
-    return render_template_string('''<a href="{{ url_for('enqueue') }}">start</a>''')
-
-@app.route('/enqueue')
-def enqueue():
-    task = Analysis.delay()
-    form2 = SearchForm()
-    return render_template('analysisView.html', JOBID=task.id, form2=form2)
-
-
-@app.route('/analysisView')
-def analysisView():
-    form2 =SearchForm()
-
-    return render_template("analysisView.html",form2= form2)
-
-
-@app.route('/progress')
-def progress():
-    jobid = request.values.get('jobid')
-    if jobid:
-        # GOTCHA: if you don't pass app=celery here,
-        # you get "NotImplementedError: No result backend configured"
-        job = AsyncResult(jobid, app=celery)
-        print (job.state)
-        print (job.result)
-        if job.state == 'PROGRESS':
-            return json.dumps(dict(
-                state=job.state,
-                progress=job.result['current']*1.0/job.result['total'],
-            ))
-        elif job.state == 'SUCCESS':
-            return json.dumps(dict(
-                state=job.state,
-                progress=1.0,
-            ))
-    return '{}'
-
-@celery.task
-def Analysis():
-    d = Detection()
-    d.Detect()
-
-    NTOTAL = 10
-    for i in range(NTOTAL):
-        time.sleep(random.random())
-        current_task.update_state(state='PROGRESS',
-                meta={'current':i,'total':NTOTAL})
-    return 999
 
 @app.route('/download/<id>', methods=['GET','POST'])
 def download(id):
@@ -681,6 +646,53 @@ def download(id):
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=case.pdf'
     return response
+
+
+######CELERY PART #########
+
+@app.route('/startAnalysis')
+def startAnalysis():
+    return render_template_string('''<a href="{{ url_for('enqueue') }}">start</a>''')
+
+@app.route('/enqueue')
+def enqueue():
+    task = Analysis.delay()
+    form2 = SearchForm()
+    return render_template('analysisView.html', JOBID=task.id, form2=form2)
+
+
+@app.route('/analysisView')
+def analysisView():
+    form2 =SearchForm()
+    return render_template("analysisView.html",form2= form2)
+
+
+@app.route('/progress')
+def progress():
+    jobid = request.values.get('jobid')
+    if jobid:
+        # GOTCHA: if you don't pass app=celery here,
+        # you get "NotImplementedError: No result backend configured"
+        job = AsyncResult(jobid, app=celery)
+        print (job.state)
+        print (job.result)
+        if job.state == 'PROGRESS':
+            return json.dumps(dict(
+                state=job.state,
+                progress=job.result['current']*1.0/job.result['total'],
+            ))
+        elif job.state == 'SUCCESS':
+            return json.dumps(dict(
+                state=job.state,
+                progress=1.0,
+            ))
+    return '{}'
+
+@celery.task
+def Analysis():
+    d = Detection()
+    d.Detect()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

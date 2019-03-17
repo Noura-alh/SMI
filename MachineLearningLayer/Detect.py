@@ -52,7 +52,8 @@ class Detection:
             dt_class = 0
             mc_class = 0
             transaction_class =0
-            profile_class = 0
+            profile_score = 0
+            profile_class = 'clean'
             GeneralSearch_result=0
             GeneralSearch_class =0
             NumberOfRecord = 0
@@ -65,7 +66,7 @@ class Detection:
                 dt_class = 1
                 search = GeneralSearch('"' + name + '"', id)
                 #search.twitter_search()
-                GeneralSearch_result, GeneralSearch_class = search.google_search()
+                #GeneralSearch_result, GeneralSearch_class = search.google_search()
 
             if (name in s for s in suspsuoiusClient):#counter for the number of suspsuoius transactions
                 NumberOfRecord = NumberOfRecord+1
@@ -79,15 +80,15 @@ class Detection:
                 transaction_class = 0
 
 
-            profile_class = (0.5 * transaction_class) + (0.5 * GeneralSearch_result)
+            profile_score = (0.5 * transaction_class) + (0.5 * GeneralSearch_result)
 
-            if 0.7 < profile_class <= 1:
+            if 0.7 < profile_score <= 1:
                 profile_class = 'High'
                 numOfHigh = numOfHigh +1
-            elif 0.33 < profile_class <= 0.7:
+            elif 0.33 < profile_score <= 0.7:
                 profile_class = 'Medium'
                 numOFMeduim = numOFMeduim + 1
-            elif 0 < profile_class <= 0.33:
+            elif 0 < profile_score <= 0.33:
                 profile_class = 'Low'
                 numOFLow = numOFLow +1
             else:
@@ -105,12 +106,26 @@ class Detection:
 
             cur1.execute("UPDATE SMI_DB.Client SET profileClassification= '%s'WHERE clientID='%s' " % (profile_class, id))
 
-            if profile_class == 'Medium':
+            if (profile_class == 'Medium') or (profile_class == 'High'):
                 date_now = datetime.now()
                 formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
                 val = (profile_class, formatted_date, id)
                 cur1.execute(query, val)
+
+        '''cur1.execute("SELECT * FROM SMI_DB.Client")
+        result = cur1.fetchall()
+
+        for each in result:
+            print(each[0])
+            print(each[2])
+            print('************')
+            if each[2] == 'High':
+                date_now = datetime.now()
+                formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
+                query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
+                val = (each[2], formatted_date, each[0])
+                cur1.execute(query, val)'''
         print('Summary:')
         print('************')
         print('Total Number of clients', len(result))

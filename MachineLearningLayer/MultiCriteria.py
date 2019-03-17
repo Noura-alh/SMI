@@ -132,11 +132,11 @@ class MultiCriteria:
                 self.df = self.df.rename(columns={'nameDest': 'clientID'})
 
                 ### Save results  ####
-                self.df.to_csv('predictionsResults.csv', encoding='utf-8', index=False)
+                #self.df.to_csv('predictionsResults.csv', encoding='utf-8', index=False)
 
-                self.suspiciousTransactions2 = self.df.loc[(self.df.amount == self.max_amount)]  # reding form csv file
-                self.suspiciousTransactions2.to_csv('suspiciousTransactions.csv', encoding='utf-8', index=False)
-                self.suspiciousTransactions2.to_sql(name='SuspiciousTransaction', con=self.engine, if_exists='append', index=False)
+                #self.suspiciousTransactions2 = self.df.loc[(self.df.amount == self.max_amount)]  # reding form csv file
+                #self.suspiciousTransactions2.to_csv('suspiciousTransactions.csv', encoding='utf-8', index=False)
+                #self.suspiciousTransactions2.to_sql(name='SuspiciousTransaction', con=self.engine, if_exists='append', index=False)
                 #print("*****ADDDEDDD****")
                 self.db.commit()
 

@@ -313,7 +313,7 @@
             {{ data[0][2] }}
             </p>
             <hr>
-              <strong>Suspicious Transactions</strong>
+              <strong style="font-size:130%" >Suspicious Transactions</strong>
 
 
             <div class="box-body table-responsive no-padding">
@@ -348,6 +348,35 @@
                 <td>{{ each[8] }}$</td>
                 </tr>
                   {% endfor %}
+
+
+              </table>
+
+            </div>
+           <strong style="font-size:130%">Business Rules Violation</strong>
+
+
+            <div class="box-body table-responsive no-padding">
+
+                {% if Br_flag == False %}
+                No Bussinse Rules Violation
+                {% endif %}
+                {% if Br_flag %}
+              <table class="table table-hover">
+
+                <tr>
+                  <th>Rule Number </th>
+                  <th>Rule Statement </th>
+                </tr>
+                   {% for keys, values in Br_dic.items() %}
+                <tr>
+                  <td>{{ keys}}</td>
+
+                  <td>{{ values }}</td>
+
+                </tr>
+                  {% endfor %}
+               {%endif %}
 
 
               </table>
