@@ -48,7 +48,7 @@ class oldCommentForm(FlaskForm):
 
 class newCommentForm(FlaskForm):
    commentBody = TextAreaField('Add Comment', validators=[DataRequired()], render_kw={"rows": 5, "cols": 11})
-   submit = SubmitField('Add Comment')
+   add_submit = SubmitField('Add Comment')
 
 
 class dbSetupForm(FlaskForm):

@@ -135,21 +135,39 @@
     </style>
                <!-- End Translation code -->
 
-
-
-          <li>
+            <!-- If user is  NOT logged in  -->
+           {% if session.get('username') == None %}
+                       <li>
               <a href="{{ url_for('login') }}">Login</a>
-          </li>
-
-          <li>
-              <a href="{{ url_for('register') }}">Register</a>
-          </li>
-
-              <li>
+             </li>
+                 <li>
 
             <a>  <div class="text-center" id="google_translate_element"></div> </a>
 
           </li>
+                 <li>
+
+              <a href="{{ url_for('register') }}">Register</a>
+          </li>
+            {% endif %}
+                 <!-- If user is  logged in  -->
+            {% if not (session.get('username') == None) %}
+
+                <li>
+              <a href="{{ url_for('bankP') }}">{{ session['username'] }}</a>
+                </li>
+                  <li>
+
+            <a>  <div class="text-center" id="google_translate_element"></div> </a>
+
+          </li>
+               <li>
+                  <a href="{{ url_for('logout') }}"><i class="fa fa-sign-out"></i></a>
+                </li>
+
+            {% endif %}
+
+
 
         </ul>
       </div>

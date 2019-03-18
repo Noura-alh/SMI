@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <style>
+        .ScrollStyle
+{
+    max-height:300px;
+    overflow-y:scroll;
+}
+        ::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+    </style>
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> SMI | Client Profile</title>
@@ -88,7 +108,7 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
-              <span class="hidden-xs">Sarah Sami</span>
+              <span class="hidden-xs">{{ session['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -96,7 +116,7 @@
                 <img src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
 
                 <p>
-                  Sarah Sami
+                {{ session['username'] }}
                   <small>AML Officer</small>
                 </p>
               </li>
@@ -119,16 +139,17 @@
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
+    <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
+            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
+
         </div>
         <div class="pull-left info">
-          <p>Sarah Sami</p>
+          <p>{{ session['username'] }}</p>
           <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
         </div>
       </div>
@@ -160,50 +181,31 @@
         <li>
           <a href="{{ url_for('home') }}">
             <i class="fa fa-home"></i> <span>Home</span>
-            <span class="pull-right-container">
 
-            </span>
           </a>
         </li>
+
         <li>
           <a href="{{ url_for('manageProfile') }}">
           <span>Manage Profile</span>
-            <span class="pull-right-container">
-
-            </span>
           </a>
         </li>
 
 
         <li>
-          <a href="{{ url_for('manageBankData') }}">
+            <a href="{{ url_for('manageBankData') }}">
           <span>Manage Bank Data</span>
-            <span class="pull-right-container">
-
-            </span>
           </a>
         </li>
-
-            <li>
-          <a href="{{ url_for('DatabaseSetup') }}">
-          <span>Database Setup</span>
-            <span class="pull-right-container">
-
-            </span>
-          </a>
-        </li>
-
-
 
         <li>
-          <a href="cases.html">
+           <a href="{{ url_for('cases') }}">
           <span>View Cases</span>
             <span class="pull-right-container">
 
             </span>
           </a>
         </li>
-
 
       </ul>
     </section>
@@ -230,8 +232,8 @@
       <section class="content-header">
 
         <ol class="breadcrumb">
-          <li><a href="{{url_for('home')}}"><i class="fa fa-home"></i>Home</a></li>
-            <li><a href="{{ url_for('bankP') }}">Profile</a></li>
+           <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
+          <li><a href="{{ url_for('bankP') }}">Profile</a></li>
           <li><a href="searchResult.html">Search Result</a></li>
           <li class="active">Client Profile</li>
         </ol>
@@ -241,12 +243,10 @@
 	<div class="row">
     <div class="col-md-7">
       <div class="box box-default" style="margin-left:10%;">
-        <form action="" methods="posts">
+        <form action="" method="post">
         <div class="box-body box-profile">
 
           <h3> <label class="label label-danger" class="profile-username text-center">High</label>&nbsp; {{ clientForm.clientName.data }}</h3>
-
-
         </br>
 
           <ul class="list-group list-group-unbordered">
@@ -264,17 +264,35 @@
      </form>
 
 
-            <form>
+            <form action="" method="post" class="read-more">
+            {{ oldCommentForm.hidden_tag() }}
+
+            <div class="ScrollStyle">
+
+                     {% for comment in record %}
           <li class="list-group-item">
-              <b>{{oldCommentForm.PrecommentContent.label()}}</b> <p>{{oldCommentForm.PrecommentContent.data}}</p>
+              <b>{{oldCommentForm.PrecommentContent.label()}}</b> <p>{{ comment[1] }}</p>
               <b>{{oldCommentForm.PrecommentDate.label()}}</b>
-              <p>{{oldCommentForm.PrecommentDate.data}}</p>
-              {{ oldCommentForm.delete(class="btn btn-default") }}
+              <p>{{ comment[2] }}</p>
+
+               <button type="submit" class="btn btn-default " name="Delete_comment" value="{{ comment[0] }}">Delete</button>
+
+         <!-- <button  name ='try' value="" >Delete</button>-->
           </li>
+                {% endfor %}
+
+            </div>
+
+
+
             </form>
 
+
+
+
           <form action="" method="post">
-                     <div class="box-header with-border">
+          {{ commentForm.hidden_tag() }}
+              <div class="box-header with-border">
 
           <h3 class="box-title">Add comment</h3>
         <div class="box-body">
@@ -294,7 +312,8 @@
       </ul>
       <div class="box-footer">
       <div class="pull-right">
-           {{ commentForm.submit(class="btn btn-default") }}
+                         {{ commentForm.add_submit(class="btn btn-default btn-block btn-flat") }}
+
       </div>
       </div>
     </div>
@@ -304,10 +323,8 @@
   </div>
 
 
-
   <!-- /.content-wrapper -->
   <!--  <footer class="main-footer">
-
   </footer>-->
 
   <!-- /.control-sidebar -->
@@ -330,6 +347,14 @@
 
 
 <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
+
+      <script src="{{ url_for('static', filename='readmore.js') }}"></script>
+
+
+
+
+
+
 
   </div>
 </div>

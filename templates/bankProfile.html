@@ -15,10 +15,8 @@
   <!-- Theme style -->
     <link href="{{ url_for('static', filename='dist/css/AdminLTE.min.css') }}" rel="stylesheet">
 
-
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-
     <link href="{{ url_for('static', filename='dist/css/skins/_all-skins.min.css') }}" rel="stylesheet">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -37,6 +35,7 @@
             }, 'google_translate_element');
         }
     </script>
+
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <style type="text/css">
         /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
@@ -45,24 +44,19 @@
             background-color: transparent;
             /*background-color: #17548d;*/ /*#e3e3ff*/
         }
-
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
             text-decoration: none;
         }
-
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
             color: #aaa;
         }
-
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
             color: white;
         }
-
         .goog-te-gadget-icon {
             display: none !important;
             /*background: url("url for the icon") 0 0 no-repeat !important;*/
         }
-
         /* Remove the down arrow */
         /* when dropdown open */
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
@@ -76,7 +70,6 @@
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
             display: none;
         }
-
         /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
         div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
             display: none;
@@ -109,11 +102,10 @@
           <!-- Logo -->
           <a href="../../index2.html" class="logo" style="background-color:#0f5757;">
             <!-- mini logo for sidebar mini 50x50 pixels -->
+      <!-- logo for regular state and mobile devices -->
+           <span class="logo-lg">  <img  height="50" width="95" src="{{url_for('static', filename='dist/img/newl.png')}}"alt="User Image"></span>
 
-            <span class="logo-mini"  ><img  height="45" width="38" src="../../dist/img/slogo.png" alt="User Image"></span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg">  <img  height="42" width="130" src="../../dist/img/newlogo.png" alt="User Image"></span>
-          </a>
+    </a>
           <!-- Header Navbar: style can be found in header.less -->
           <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
@@ -127,43 +119,44 @@
             <div class="navbar-custom-menu">
               <ul class="nav navbar-nav">
                 <!-- Notifications: style can be found in dropdown.less -->
+
+
                 <li class="dropdown notifications-menu">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <a href="" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-bell-o"></i>
-                    <span class="label label-warning">1</span>
+                    <span id ='alert_count' class="label label-warning" style="visibility: {% if alert > 0 %}visible
+                            {% else %}hidden {% endif %};">{{ alert }}</span>
                   </a>
-                  <ul class="dropdown-menu">
-                    <li class="header">You have 1 notifications</li>
+                  <ul class="dropdown-menu" style="visibility: {% if alert == 0 %}hidden
+                            {% else %}visible {% endif %};">
+                    <li class="header">You have {{ alert }} new cases</li>
                     <li>
                       <!-- inner menu: contains the actual data -->
                       <ul class="menu">
 
                         <li>
-                          <a href="#">
+                          <a href="{{ url_for('cases') }}">
                             <i class="fa fa-warning text-yellow"></i>
-                            suspicious transaction has been detected in
-                            “Client Name: Bader, ID:219” account
+                             New suspicious transaction has been detected
                           </a>
                         </li>
-
                       </ul>
                     </li>
-                    <li class="footer"><a href="#">View Cases</a></li>
+                    <li class="footer"><a  href="{{ url_for('cases') }}">View Cases</a></li>
                   </ul>
                 </li>
+
+
+
 
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <img   src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="user-image" alt="User Image">
-
                     <span class="hidden-xs">{{ session['username'] }}</span>
                   </a>
                   <ul class="dropdown-menu">
                     <!-- User image -->
                     <li class="user-header">
-                      <img  src="{{url_for('static', filename='dist/img/Riyadh1.png')}}" class="img-circle" alt="User Image">
-
                       <p>
                        {{ session['username'] }}
                         <small>AML Officer</small>
@@ -197,38 +190,25 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="img-circle" alt="User Image">
-
-        </div>
-        <div class="pull-left info">
-          <p>{{ session['username'] }}</p>
-          <a href="#"> <i class="fa fa-circle text-success"></i> Logged in</a>
-        </div>
-      </div>
-
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
 
         <li class="treeview">
-          <a href="#">
-            <i class="fa fa-search"></i> <span>Search For Client</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-
-              <form action="#" method="get" class="sidebar-form">
+           <a> <i class="fa fa-search"></i> <span>Search For Client</span>
+              </a>
+                <!-- search form -->
+              <form action="#" method="post" class="sidebar-form" role="form">
+                   {{ form.hidden_tag() }}
               <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                    <span class="input-group-btn">
-                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                      </button>
-                    </span>
+                   {{ form.search( class="form-control")  }}
+
+                        {{ form.search_submit(class="btn btn-primary btn-block btn-flat input-group-btn") }}
+                        <!-- <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                      </button> -->
               </div>
             </form>
-          </a>
+
         </li>
 
 
@@ -239,6 +219,21 @@
           </a>
         </li>
 
+
+           <li class="treeview">
+          <a href="#">
+            <i class="fa fa-edit"></i> <span>Manage Bank Data</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+           <li><a href="{{ url_for('DatabaseSetup') }}">Database Setup</a></li>
+            <li><a href="{{ url_for('manageBankData') }}">business Rules Setup</a></li>
+
+          </ul>
+        </li>
+
         <li>
           <a href="{{ url_for('manageProfile') }}">
           <span>Manage Profile</span>
@@ -246,14 +241,9 @@
         </li>
 
 
-        <li>
-          <a href="ManageBankData.html">
-          <span>Manage Bank Data</span>
-          </a>
-        </li>
 
-        <li>
-          <a href="cases.html">
+          <li>
+           <a href="{{ url_for('cases') }}">
           <span>View Cases</span>
             <span class="pull-right-container">
 
@@ -282,6 +272,7 @@
 
         {% endif %}
     {% endwith %}
+
     <section class="content-header">
 
       <h1>
@@ -308,7 +299,6 @@
 
 
           <div style="margin-left:3%;">
-            <img src="{{url_for('static', filename='dist/img/Riyadh.png')}}" class="avatar img-circle" alt="avatar" width="17%" height="20%">
           </div>
 
 
@@ -340,71 +330,8 @@
       </section>
   </div>
      <!-- Google Translate Element begin -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en', includedLanguages: 'en,ar',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <style type="text/css">
-        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
-        div#google_translate_element div.goog-te-gadget-simple {
-            border: none;
-            background-color: transparent;
-            /*background-color: #17548d;*/ /*#e3e3ff*/
-        }
 
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value:hover {
-            text-decoration: none;
-        }
 
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span {
-            color: #aaa;
-        }
-
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span:hover {
-            color: white;
-        }
-
-        .goog-te-gadget-icon {
-            display: none !important;
-            /*background: url("url for the icon") 0 0 no-repeat !important;*/
-        }
-
-        /* Remove the down arrow */
-        /* when dropdown open */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(213, 213, 213);"] {
-            display: none;
-        }
-        /* after clicked/touched */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(118, 118, 118);"] {
-            display: none;
-        }
-        /* on page load (not yet touched or clicked) */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="color: rgb(155, 155, 155);"] {
-            display: none;
-        }
-
-        /* Remove span with left border line | (next to the arrow) in Chrome & Firefox */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left: 1px solid rgb(187, 187, 187);"] {
-            display: none;
-        }
-        /* Remove span with left border line | (next to the arrow) in Edge & IE11 */
-        div#google_translate_element div.goog-te-gadget-simple a.goog-te-menu-value span[style="border-left-color: rgb(187, 187, 187); border-left-width: 1px; border-left-style: solid;"] {
-            display: none;
-        }
-        /* HIDE the google translate toolbar */
-        .goog-te-banner-frame.skiptranslate {
-            display: none !important;
-        }
-        body {
-            top: 0px !important;
-        }
-        /* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */
-    </style>
                <!-- End Translation code -->
   <!-- Control Sidebar -->
   <!-- /.control-sidebar -->
@@ -415,26 +342,14 @@
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
 
-<script>
-    location.href = Flask.url_for('bower_components/jquery/dist/jquery.min.js', {});
-</script>
-<!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
- <script>
-    location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
-</script>
-<!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-      <script>
-    location.href = Flask.url_for('bower_components/bootstrap/dist/js/bootstrap.min.js', {});
-</script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
 
+
+<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
 
 </body>
 </html>

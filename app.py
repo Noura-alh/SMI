@@ -66,23 +66,6 @@ def login():
 
         # Check id user exisit in the database
         cur, db, enginec = connection2()
-        '''query = "SELECT * FROM AMLOfficer WHERE userName = '" + form.username.data + "' AND password = '" + form.password.data + "' "
-        cur.execute(query)
-        data1 = cur.fetchone()
-        if data1 is None:
-            flash('Invalid username or password please try again', 'danger')
-            return render_template('login.html', form=form)
-        else:
-            query = "SELECT email FROM AMLOfficer WHERE userName = '" + form.username.data + "'"
-            cur.execute(query)
-            useremail = cur.fetchone()
-            session["username"] = form.username.data
-            session["email"] = useremail
-            flash(f'Welcome back {form.username.data}', 'success')
-            return redirect(url_for('bankP'))
-        db.commit()
-        cur.close()
-        db.close()'''
         cur.execute("SELECT COUNT(1) FROM AMLOfficer WHERE userName = %s;", [form.username.data])  # CHECKS IF USERNAME EXSIST
         if cur.fetchone()[0]:
             cur.execute("SELECT password FROM AMLOfficer WHERE userName = %s;", [form.username.data])  # FETCH THE HASHED PASSWORD
@@ -185,13 +168,24 @@ def forgotPass():
     return render_template("forgotPassword.html", form=form)
 
 
-@app.route("/bankProfile")
+@app.route("/bankProfile" , methods=['GET', 'POST'])
 def bankP():
-    # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
+    cur, db, engine = connection2()
+    query = "SELECT * FROM SMI_DB.ClientCase WHERE viewed ='1'"
+    cur.execute(query)
+    totalAlert = cur.fetchall()
+    totalAlert = len(totalAlert)
+    print(totalAlert)
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect((url_for('searchResult', id= form.search.data)))  # or what you want
+    return render_template("bankProfile.html", form = form, alert = totalAlert)
 
-    return render_template("bankProfile.html")
+
+
+
 
 
 @app.route("/ManageProfile", methods=['GET', 'POST'])
@@ -272,55 +266,68 @@ def manageBankData():
     return render_template("ManageBankData.html", form=form, form2=search_form)
 
 
-@app.route("/clientProfile", methods=['GET', 'POST'])
-def clientProfile():
+@app.route("/clientProfile/<id>", methods=['GET', 'POST'])
+def clientProfile(id):
     client_form = clientForm()
     new_comment = newCommentForm()
     old_comment = oldCommentForm()
     cur, db, engine = connection2()
+
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
     else:
-        #Retrive client Info from database:
-        query = "SELECT * FROM SMI_DB.Client WHERE clientID = 1"
+        # Retrive client Info from database:
+        query = "SELECT * FROM SMI_DB.Client WHERE clientID = '" + id + "'"
         cur.execute(query)
         record = cur.fetchall()
-        result=[]
+        result = []
         for column in record:
-            client_form.clientID.data = column[0] #clientID
-            client_form.clientName.data = column[1] #clientName
-            client_form.clientSalary.data = column[2] #clientSalary
-            client_form.clientClass.data = column[3]  #clientClass
+            client_form.clientID.data = column[0]  # clientID
+            client_form.clientName.data = column[1]  # clientName
+            client_form.clientSalary.data = column[2]  # clientSalary
+            client_form.clientClass.data = column[3]  # clientClass
 
-    cur, db, engine = connection2()
-    query = "SELECT * FROM SMI_DB.Comment WHERE clientID = 1"
-    cur.execute(query)
-    record = cur.fetchall()
-    if not (record is None) :
-        for column in record:
-            old_comment.PrecommentDate.data = column[2] #comment date
-            old_comment.PrecommentContent.data = column[1] #comment body
-        return render_template("clientProfile.html", clientForm=client_form, commentForm=new_comment,
-                               oldCommentForm=old_comment)
-    if new_comment.validate_on_submit():
-        date_now = datetime.now()
-        formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
-        query = "INSERT INTO SMI_DB.Comment (commentBody, commentDate, clientID, officerName ) VALUES(%s,%s,%s,%s)"
-        val = (new_comment.commentBody.data, formatted_date, formatted_date, 1, session['username'])
-        cur.execute(query, val)
-        db.commit()
-        cur.close()
-        db.close()
+        cur, db, engine = connection2()
+        query = "SELECT * FROM SMI_DB.Comment WHERE clientID = '" + id + "'"
+        cur.execute(query)
+        record = cur.fetchall()
 
-    return render_template("clientProfile.html", clientForm = client_form, commentForm = new_comment)
+        # if not (record is None) :
+        # for column in record:
+        # old_comment.PrecommentDate.data = column[2] #comment date
+        # old_comment.PrecommentContent.data = column[1] #comment body
+        # return render_template("clientProfile.html", clientForm=client_form, commentForm=new_comment,oldCommentForm=old_comment)
+
+        if new_comment.add_submit.data and new_comment.validate_on_submit():
+            print("works")
+            cur, db, engine = connection2()
+            date_now = datetime.now()
+            formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
+            query = "INSERT INTO SMI_DB.Comment (commentBody, commentDate, clientID, officerName ) VALUES(%s,%s,%s,%s)"
+            val = (new_comment.commentBody.data, formatted_date, id, session['username'])
+            print(new_comment.commentBody.data)
+            cur.execute(query, val)
+            db.commit()
+            cur.close()
+            db.close()
+            return redirect(url_for('clientProfile', commentForm=new_comment, id=id))
+
+        print(old_comment.delete.data)
+
+        if old_comment.validate_on_submit():
+            print('the delete works')
+            cur, db, engine = connection2()
+            id1 = request.form['Delete_comment']
+            print(id)
+            print(id1)
+            query = "DELETE FROM SMI_DB.Comment WHERE commentID = '" + id1 + "'"
+            cur.execute(query)
+            return redirect(url_for('clientProfile', oldCommentForm=old_comment, id1=id1, id=id))
 
 
-'''@app.route("/addComment")
-def comment():
-    # Only logged in users can access bank profile
-    if session.get('username') == None:
-        return redirect(url_for('home'))'''
+        return render_template("clientProfile.html", clientForm=client_form, commentForm=new_comment, record=record,oldCommentForm=old_comment)
+
 
 @app.route("/DatabaseSetup", methods=['GET', 'POST'])
 def DatabaseSetup():
@@ -468,21 +475,16 @@ def Report(id):
 
 @app.route("/Cases" , methods=['GET', 'POST'])
 def cases():
-    # Only logged in users can access bank profile
-    if session.get('username') == None:
-        return redirect(url_for('home'))
-
     search = False
     q = request.args.get('q')
     if q:
         search = True
 
-    cur, db , engine = connection2()
     # Only logged in users can access bank profile
     if session.get('username') == None:
         return redirect(url_for('home'))
     else:
-
+        cur, db, engine = connection2()
         form = ViewCasesForm()
         search_form = SearchForm()
         per_page = 4
@@ -491,25 +493,25 @@ def cases():
         query = "SELECT * FROM SMI_DB.ClientCase "
         cur.execute(query)
         total = cur.fetchall()
+        countCases = len(total)
         cur.execute("SELECT * FROM SMI_DB.ClientCase ORDER BY caseID DESC LIMIT %s OFFSET %s", (per_page, offset))
         cases = cur.fetchall()
-        countCases = len(cases)
 
         if search_form.search_submit.data and search_form.validate_on_submit():
             return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
 
-
-        if  form.validate_on_submit():
-            #id = form.hidden.data
-            #id = request.form.get('case_submit')
+        if form.validate_on_submit():
+            # id = form.hidden.data
+            # id = request.form.get('case_submit')
             id = request.form['caseView']
-            #id2 = request.form['caseDownload']
+            # id2 = request.form['caseDownload']
             print(id)
-            return redirect((url_for('case' , id = id)))
+            return redirect((url_for('case', id=id)))
 
-        pagination = Pagination(page=page,per_page = per_page, total= len(total) ,offset = offset , search=search, record_name='cases' , css_framework='bootstrap3')
+        pagination = Pagination(page=page, per_page=per_page, total=len(total), offset=offset, search=search,
+                                record_name='cases', css_framework='bootstrap3')
 
-        return render_template("cases.html", cases = cases, form=form , form2 = search_form  , pagination=pagination ,css_framework='foundation', caseId = 0, countCases= countCases)
+        return render_template("cases.html", cases=cases, form=form, form2=search_form, pagination=pagination,css_framework='foundation', caseId=0, countCases=countCases)
 
 @app.route("/case/<id>", methods=['GET', 'POST'])
 def case(id):
@@ -660,12 +662,10 @@ def enqueue():
     form2 = SearchForm()
     return render_template('analysisView.html', JOBID=task.id, form2=form2)
 
-
 @app.route('/analysisView')
 def analysisView():
     form2 =SearchForm()
     return render_template("analysisView.html",form2= form2)
-
 
 @app.route('/progress')
 def progress():

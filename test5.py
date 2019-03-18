@@ -36,13 +36,14 @@ class Detection:
         #Create profiles
         cur2.execute('SELECT clientID, clientName FROM bank_db.transaction')
         result = list(set(list(cur2.fetchall())))
+        db2.commit()
         cur2.close()
-        db2.close()
 
         #get client how flagged suspious transactions
         cur1.execute('SELECT clientName FROM SMI_DB.SuspiciousTransaction')
         suspsuoiusClient = list(set(list(cur1.fetchall())))
-
+        db1.commit()
+        cur1.close()
 
 
         i = 1
@@ -101,6 +102,7 @@ class Detection:
             print('client Name: ', name)
             print('Multi Criteria Score: ',mc_class)
             print('Before IF statment', profile_class)
+            print('**************************')
             print('search_result: ', GeneralSearch_result)
             print('transaction_class: ', transaction_class)
             print('GeneralSearch_class: ', GeneralSearch_class)
@@ -112,13 +114,17 @@ class Detection:
                 date_now = datetime.now()
                 formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
+                db1.commit()
+                cur1.close()
                 val = (profile_class, formatted_date, id)
                 cur1.execute(query, val)
+                db1.commit()
+                cur1.close()
+
 
             cur1.execute("UPDATE SMI_DB.Client SET profileClassification= '%s'WHERE clientID='%s' " % (profile_class, id))
-
-        cur1.close()
-        db1.close()
+            db1.commit()
+            cur1.close()
 
 
         print('Summary:')
