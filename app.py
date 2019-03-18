@@ -376,6 +376,11 @@ def DatabaseSetup():
                 search_form = SearchForm()
                 form = manageBankDataForm()
                 return render_template("ManageBankData.html", form=form, form2=search_form)
+            else:
+                task = Analysis.delay()
+                form2 = SearchForm()
+                flash('Successfully connected to the database..', 'success')
+                return render_template('analysisView.html', JOBID=task.id, form2=form2)
 
             # Check if bussinse rule is uploaded
             flash('Successfully connected to the database..', 'success')

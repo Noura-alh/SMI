@@ -229,9 +229,22 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+    {% endwith %}
       <h1>
-       Cases
-      <!--  <small>preview of simple tables</small> -->
+
+        <br>
       </h1>
     <ol class="breadcrumb">
         <li><a href="{{ url_for('home') }}"><i class="fa fa-home"></i> Home</a></li>
@@ -247,7 +260,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Cases</h3>
+              <h3 style="margin-left: 25%" class="box-title">Transactions analysis has been started.. it might take awhile  </h3>
             </div>
             <!-- /.box-header -->
 

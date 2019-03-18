@@ -68,7 +68,7 @@ class Detection:
                 dt_class = 1
                 search = GeneralSearch('"' + name + '"', id)
                 #search.twitter_search()
-                #GeneralSearch_result, GeneralSearch_class = search.google_search()
+                GeneralSearch_result, GeneralSearch_class = search.google_search()
 
             if (name in s for s in suspsuoiusClient):#counter for the number of suspsuoius transactions
                 NumberOfRecord = NumberOfRecord+1
@@ -108,7 +108,7 @@ class Detection:
             print('***********************')
 
 
-            if (profile_class == 'Low'):
+            if (profile_class == 'High') or (profile_class == 'Medium') :
                 date_now = datetime.now()
                 formatted_date = date_now.strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO ClientCase (caseClassification, date, clientID) VALUES(%s,%s, %s)"
@@ -129,5 +129,3 @@ class Detection:
         print('Number of Meduim clients:', numOFMeduim)
         print('Number of High clients:', numOfHigh)
 
-a = Detection()
-a.Detect()
