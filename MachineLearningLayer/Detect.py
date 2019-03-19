@@ -68,7 +68,7 @@ class Detection:
                 dt_class = 1
                 search = GeneralSearch('"' + name + '"', id)
                 #search.twitter_search()
-                GeneralSearch_result, GeneralSearch_class = search.google_search()
+                #GeneralSearch_result, GeneralSearch_class = search.google_search()
 
             if (name in s for s in suspsuoiusClient):#counter for the number of suspsuoius transactions
                 NumberOfRecord = NumberOfRecord+1

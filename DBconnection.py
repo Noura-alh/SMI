@@ -69,17 +69,22 @@ def BankConnection():
 
 
 def firebaseConnection():
-    config = {
-        "apiKey": "AIzaSyBdvcfSBiaMQjb0q9g04emiCFYksGMvJfo",
-        "authDomain": "saudi-money-investigator.firebaseapp.com",
-        "databaseURL": "https://saudi-money-investigator.firebaseio.com",
-        "projectId": "saudi-money-investigator",
-        "storageBucket": "saudi-money-investigator.appspot.com",
-        "messagingSenderId": "1098052350164"
 
-    }
 
-    return pyrebase.initialize_app(config)
+        config = {
+            "apiKey": "AIzaSyBdvcfSBiaMQjb0q9g04emiCFYksGMvJfo",
+            "authDomain": "saudi-money-investigator.firebaseapp.com",
+            "databaseURL": "https://saudi-money-investigator.firebaseio.com",
+            "projectId": "saudi-money-investigator",
+            "storageBucket": "saudi-money-investigator.appspot.com",
+            "messagingSenderId": "1098052350164"
+
+        }
+
+        return pyrebase.initialize_app(config)
+
+
+
 
 
 

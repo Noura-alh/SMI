@@ -217,7 +217,7 @@
 
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
+                <div class="alert alert-{{ category }}"  style="font-size:125%;">
                 {{ message }}
                 </div>
 
@@ -258,7 +258,10 @@
             <!-- form start -->
 </br>
 
-            <form  action="{{ url_for('manageBankData') }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
+            <form  action="{{ url_for('manageBankData') }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data"
+            {% if not(isFB_Connected == 'flase') %}
+                onsubmit="return confirm('Are you sure you want to update your old Business Rules connection?')"
+            {% endif %}>
                     {{ form.hidden_tag() }}
               <div class="box-body">
               <input type="radio" name="tab" value="igotnone" onclick="show1();" /> Upload Business Rules &ensp; &ensp; &ensp;

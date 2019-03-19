@@ -290,7 +290,7 @@
 
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="font-size:160%;">
+                <div class="alert alert-{{ category }}" style="font-size:125%;">
                 {{ message }}
                 </div>
 
@@ -319,7 +319,9 @@
       <div class="col-md-9 personal-info">
         <h3 style="color:#004D40;"> <b>Database info</b></h3>
 
-        <form action="" method="post" class="form-horizontal" role="form">
+        <form action="" method="post" class="form-horizontal" role="form" {% if status==0 %}
+            onsubmit="return confirm('Are you sure you want to change your old database connection?')"
+        {% endif %}>
             {{form.hidden_tag()}}
 
           <div class="form-group">

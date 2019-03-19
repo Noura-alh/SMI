@@ -184,10 +184,6 @@ def bankP():
     return render_template("bankProfile.html", form = form, alert = totalAlert)
 
 
-
-
-
-
 @app.route("/ManageProfile", methods=['GET', 'POST'])
 def manageProfile():
     form = bankProfileForm()
@@ -215,6 +211,7 @@ def manageBankData():
     form = manageBankDataForm()
     search_form = SearchForm()
     status, cur, db, engine = BankConnection()
+    isFB_Connected = 'false'
     if form.bank_submit.data and form.validate_on_submit():
         ## check if there's prevoius BR and confirm to update it
 
@@ -229,41 +226,52 @@ def manageBankData():
         filename = file.filename
         print(filename)
 
+
         if filename.split(".", 1)[1] != 'txt':
             flash('File extention should be txt', 'danger')
-            return render_template("ManageBankData.html", form=form, form2=search_form)
+            return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected)
 
         else:
             dest = "/".join([target, filename])
             print(dest)
             file.save(dest)
+        try:
+            db = firebase.database()
+            isFB_Connected = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
+            # businessRules_file = businessRules_file.data
+            sanction_list = open("Br_file/" + filename, "r")
+            risk_countries = form.risk_countries.data
+            exceed_avg_tran = form.exceed_avg_tran.data
+            # type1 = form.type.data
+            amount = form.amount.data
+            db.child('Rule1').child('highRiskCountries').set(risk_countries)
+            db.child('Rule2').child('exceedingAvgTransaction').set(exceed_avg_tran)
+            # db.child('Rule3').child('suspiciousTransaction').child('Type').set(type1)
+            db.child('Rule3').child('suspiciousTransaction').child('amount').set(amount)
+            db.child('Rule4').child('blackList').set(sanction_list.read().splitlines())
+        except Exception as e:
+            flash('Please connect to the Internet..', 'danger')
+            return render_template("databaseSetup.html", form=form, status=status)
 
-        db = firebase.database()
-        # businessRules_file = businessRules_file.data
-        sanction_list = open("Br_file/" + filename, "r")
-        risk_countries = form.risk_countries.data
-        exceed_avg_tran = form.exceed_avg_tran.data
-        # type1 = form.type.data
-        amount = form.amount.data
-        db.child('Rule1').child('highRiskCountries').set(risk_countries)
-        db.child('Rule2').child('exceedingAvgTransaction').set(exceed_avg_tran)
-        # db.child('Rule3').child('suspiciousTransaction').child('Type').set(type1)
-        db.child('Rule3').child('suspiciousTransaction').child('amount').set(amount)
-        db.child('Rule4').child('blackList').set(sanction_list.read().splitlines())
 
         if status == 1: # If upload BR and didn't set DB redirect to database setup
             flash('Successfully uploaded your business rules..Setup your database connection to start the analysis', 'success')
             form = dbSetupForm()
-            return render_template("databaseSetup.html", form=form)
-        #if status == 0
+            return render_template("databaseSetup.html", form=form, status= status)
 
-        return redirect((url_for('manageBankData', form=form, form2=search_form)))
+        if status == 0:
+            task = Analysis.delay()
+            form2 = SearchForm()
+            flash('Successfully uploaded your business rules..', 'success')
+            return render_template('analysisView.html', JOBID=task.id, form2=form2)
+
+        return redirect((url_for('manageBankData', form=form, form2=search_form, isFB_Connected = isFB_Connected)))
 
     if search_form.search_submit.data and search_form.validate_on_submit():
         return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
 
 
-    return render_template("ManageBankData.html", form=form, form2=search_form)
+    return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected = isFB_Connected)
 
 
 @app.route("/clientProfile/<id>", methods=['GET', 'POST'])
@@ -336,15 +344,15 @@ def DatabaseSetup():
         return redirect(url_for('home'))
     form = dbSetupForm()
     status, cur, db, engine = BankConnection()
-    db = firebase.database()
-    isFB_Connected = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
-    if status == 0: #If DB is already set bring the form.
-        config = configparser.ConfigParser()
-        config.read('credentials.ini')
-        form.db_host.data = config['DB_credentials']['host']
-        form.db_name.data = config['DB_credentials']['db']
-        form.db_pass.data = config['DB_credentials']['passwd']
-        form.db_user.data = config['DB_credentials']['user']
+    try:
+     db = firebase.database()
+     isFB_Connected = db.child('Rule3').child('suspiciousTransaction').child('amount').get().val()
+    except Exception as e:
+        flash('Please connect to the Internet..', 'danger')
+        return render_template("databaseSetup.html", form=form, status=status)
+
+
+
 
     if form.validate_on_submit():
         if status == 0: # If the user tried to connect to already connected DB
@@ -357,7 +365,7 @@ def DatabaseSetup():
                     and form.db_user.data == config['DB_credentials']['user']:
 
                 flash('You are already connected to this database..', 'success')
-                return render_template("databaseSetup.html", form=form)
+                return render_template("databaseSetup.html", form=form, status = status)
 
         config = configparser.ConfigParser()
         config['DB_credentials'] = {'host': form.db_host.data,
@@ -369,7 +377,7 @@ def DatabaseSetup():
         status, cur, db, engine= BankConnection()
         if status == 1:
             flash('Unable to connect please try again..', 'danger')
-            return render_template("databaseSetup.html", form=form)
+            return render_template("databaseSetup.html", form=form, status = status)
         else:
             if isFB_Connected == 'false':
                 flash('Successfully connected to the database..Upload your business rules to start the analysis', 'success')
@@ -382,15 +390,19 @@ def DatabaseSetup():
                 flash('Successfully connected to the database..', 'success')
                 return render_template('analysisView.html', JOBID=task.id, form2=form2)
 
-            # Check if bussinse rule is uploaded
+                # Check if bussinse rule is uploaded
             flash('Successfully connected to the database..', 'success')
-            return render_template("databaseSetup.html", form=form)
+            return render_template("databaseSetup.html", form=form, status = status)
+    if status == 0:  # If DB is already set bring the form.
+        config = configparser.ConfigParser()
+        config.read('credentials.ini')
+        form.db_host.data = config['DB_credentials']['host']
+        form.db_name.data = config['DB_credentials']['db']
+        form.db_pass.data = config['DB_credentials']['passwd']
+        form.db_user.data = config['DB_credentials']['user']
 
 
-
-
-
-    return render_template("databaseSetup.html", form = form)
+    return render_template("databaseSetup.html", form = form, status = status)
 
 @app.route("/Report/<id>", methods=['GET', 'POST'])
 def Report(id):
