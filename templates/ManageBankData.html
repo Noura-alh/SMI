@@ -272,15 +272,23 @@
                 <div  id="div1" style="display: none" >
                    <div class="form-group">
 
-                       <h4 class="col-md-3 control-label">Rule#1:</h4>
+                       <h7 class="col-md-3 control-label">Uplaod Bussinse Rules:</h7>
                    <div class="col-md-8">
-                       <!-- Select input form -->
 
 
-                       <input name='file_br' type="file" accept="Br_file/*" />
-                         <p class="help-block">file extention, .txt</p>
+
+                       <input name='file_user' type="file" accept="Br_file/*" />
+                         <p class="help-block">file extention, .json</p>
+                       {% if is_Br_submitted==1  %} <p class="help-block" style="color: red">please select a file </p> {% endif %}
+                   {% if file_exttintion_json==1  %} <p class="help-block" style="color: red">file must be in json format </p> {% endif %}
+
 
                     </div>
+
+                       <div class="col-md-8" >
+                           <br><br>
+                       <a href= '{{ url_for('uploadBR') }}' class="btn btn-primary" style="margin-left:38%;"> Submit </a>
+                       </div>
                       </div>
 
 

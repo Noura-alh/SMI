@@ -17,6 +17,7 @@ import os
 from celery.result import AsyncResult
 import json
 import pdfkit
+import pprint
 
 
 app = Flask(__name__)
@@ -703,6 +704,124 @@ def download(id):
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=case.pdf'
     return response
+
+@app.route('/uploadBR', methods=['GET','POST'] )
+def uploadBR():
+    # Only logged in users can access bank profile
+    if session.get('username') == None:
+        return redirect(url_for('home'))
+    form = manageBankDataForm()
+    search_form = SearchForm()
+    status, cur, db, engine = BankConnection()
+    is_Br_submitted = 0
+    file_exttintion_json = 0
+    isFB_Connected = 'false'
+    operands = ['==', 'not', 'or', 'in', 'and', '<', '>', '<=', '>=']
+
+    print()
+    target = os.path.join(APP_ROOT, 'Br_User/')
+    print(target)
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    file = request.files.get('file_user')
+    print(file)
+    if file is None:
+        return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected,
+                               is_Br_submitted=1)
+    filename = file.filename
+    print(filename)
+
+    if filename.split(".", 1)[1] != 'json':
+        file_exttintion_json = 1
+        return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected,
+                               is_Br_submitted=is_Br_submitted, file_exttintion_json=file_exttintion_json)
+
+    else:
+        dest = "/".join([target, filename])
+        print(dest)
+        file.save(dest)
+
+        with open('Br_file/Br1.json') as f:
+            data = json.load(f)
+
+        pprint(data)
+
+        if 'Rules' not in data:
+            print('ERROR...your file is not well structured... please follow the file format in the sample')
+
+        firebase = firebaseConnection()
+        fb = firebase.database()
+
+        print('Number of rules', len(data['Rules']))
+
+        i = 1
+        for each in data['Rules']:
+            ### 1-check Key words structure #####
+            if 'Rule{}'.format(i) not in data['Rules']:
+                print('ERROR in your file structure in Rule{} please follow the format'.format(i))
+                break
+            else:
+                print('Correct format')
+            ### 2- check if all attriubtes in dataset ###
+
+            if data['Rules']['Rule' + str(i)][0] not in cur.column_names:
+                print('Rule{} attribute {} not found in the dataset'.format(i, data['Rules']['Rule1'][0]))
+                break
+            else:
+                print('all attributes were found in dataset')
+
+            ### 3- check if theres illegal operand ####
+
+            if data['Rules']['Rule' + str(i)][1] not in operands:
+                print('Illegal operand ({})in Rule{}'.format(data['Rules']['Rule1'][1], i))
+                break
+            else:
+                print('all legal operand')
+
+                #### 4- If there's rule for sanction, check if names are uploaded and get the names ####
+            if data['Rules']['Rule' + str(i)][2] == 'sanctionList':
+                print('Rule for sanction list')
+                if ('sanctionList' not in data):
+                    print('for Rule{} Please  upload the sanction list section to the file'.format(i))
+                else:
+                    print('Sanction list is uploaded:')
+                    if len(data['sanctionList']) == 0:
+                        print('Sanction List is empty please upload the names')
+                    print(data['sanctionList'])
+
+            else:
+                print('No Rule for sanction list ')
+
+                #### 5- If there's rule for risk countries, check if countries are uploaded and get the countries ####
+            if data['Rules']['Rule' + str(i)][2] == 'HighRiskCountries':
+                print('Rule for Risk countries')
+                if ('HighRiskCountries' not in data):
+                    print('for Rule{} Please  upload the HighRiskCountries list section to the file'.format(i))
+                else:
+                    print('HighRiskCountries list is uploaded:')
+                    if len(data['HighRiskCountries']) == 0:
+                        print('HighRiskCountries is empty please upload the names')
+                    print(data['HighRiskCountries'])
+
+            else:
+                print('No Rule for HighRiskCountries ')
+
+            print('*******************************')
+
+            fb.child('Rules').child('Rule' + str(i)).set(data['Rules']['Rule' + str(i)])
+
+            i = i + 1
+
+
+
+
+
+    return redirect((url_for('manageBankData', form=form, form2=search_form, isFB_Connected=isFB_Connected,
+                             is_Br_submitted=is_Br_submitted)))
+
+
+
 
 
 ######CELERY PART #########

@@ -118,7 +118,7 @@ class MultiCriteria:
             self.db.commit()
 
 
-mc = MultiCriteria()
+'''mc = MultiCriteria()
 
 firebase = firebaseConnection()
 db = firebase.database()
@@ -133,7 +133,7 @@ result = list(set(list(cur2.fetchall())))
 for id in result:
     # mc_class = mc.multi_criteria(id)
     flags = mc.business_rules(data, id)
-    print(flags, "***flagsResultWithDivsion**")
+    print(flags, "***flagsResultWithDivsion**") '''
 
 '''        
 
