@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+
+
+<form  action="{{ url_for('uplaoadfile') }}" method="post" class="form-horizontal" role="form" enctype="multipart/form-data"
+
+                   <div class="col-md-8">
+                       <!-- Select input form -->
+
+
+                       <input name='file_br' type="file" accept="Br_file/*" />
+                         <p class="help-block">file extention, .json</p>
+                       {% if isuploaded==1  %} <p class="help-block" style="color: red">please uplaod file </p> {% endif %}
+                       {% if json_exttintion==1  %} <p class="help-block" style="color: red">file must be in json format </p> {% endif %}
+                   <input type="submit"/>
+                    </div>
+            </form>
+
+
+
+
+</body>
+</html>

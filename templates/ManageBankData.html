@@ -276,7 +276,9 @@
                    <div class="col-md-8">
                        <!-- Select input form -->
 
-                   <!--  <input type="file" id="exampleInputFile"  > -->
+
+                       <input name='file_br' type="file" accept="Br_file/*" />
+                         <p class="help-block">file extention, .txt</p>
 
                     </div>
                       </div>
@@ -297,6 +299,8 @@
                        <input name='file_br' type="file" accept="Br_file/*" />
                    <!--  <input type="file" id="exampleInputFile"  > -->
                   <p class="help-block">file extention, .txt</p>
+                        {% if file_exttintion==1 %} <p class="help-block" style="color:red;">file extention must be .txt</p>{% endif %}
+                      {% if file_submit==1 %} <p class="help-block" style="color:red;">Please upload your sanction list</p>{% endif %}
                     </div>
                       </div>
 

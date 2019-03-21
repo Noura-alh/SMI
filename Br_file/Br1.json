@@ -1,0 +1,11 @@
+{
+  "Rules" : {
+    "Rule1" : [ "amount", ">", 200000 ],
+    "Rule2" : [ "clientName", "==", "حجاج العجمي" ],
+    "Rule3" : [ "amount", "==", 1161495.82 ],
+    "Rule4" : [ "amount", "==" , 500 ],
+    "Rule5" : ["clientName","in", "sanctionList"]
+  },"sanctionList" : ["حجاج العجمي" , "منيرة القبيسي"],
+  "HighRiskCountries" : []
+
+}

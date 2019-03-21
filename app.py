@@ -59,6 +59,41 @@ def home():
     return render_template("home.html")
 
 
+@app.route("/test", methods=['GET', 'POST'])
+def uplaoadfile():
+    isuploaded = 0
+    json_exttintion = 0
+
+    target = os.path.join(APP_ROOT, 'Br_file/')
+    print(target)
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    file = request.files.get('file_br')
+    print(file)
+    if file is None:
+        return render_template("file.html",isuploaded = 1, json_exttintion = json_exttintion )
+    filename = file.filename
+    print(filename)
+
+    if filename.split(".", 1)[1] != 'json':
+        json_exttintion = 1
+        return render_template("file.html", isuploaded = isuploaded, json_exttintion=1)
+
+    else:
+        dest = "/".join([target, filename])
+        print(dest)
+        file.save(dest)
+        ## make sure all variables in dataset ###
+
+
+
+
+
+
+    return render_template("file.html")
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -211,6 +246,8 @@ def manageBankData():
     form = manageBankDataForm()
     search_form = SearchForm()
     status, cur, db, engine = BankConnection()
+    file_submit = 0
+    file_exttintion =0
     isFB_Connected = 'false'
     if form.bank_submit.data and form.validate_on_submit():
         ## check if there's prevoius BR and confirm to update it
@@ -223,13 +260,14 @@ def manageBankData():
 
         file = request.files.get('file_br')
         print(file)
+        if file is None:
+            return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected, file_submit =1)
         filename = file.filename
         print(filename)
 
-
         if filename.split(".", 1)[1] != 'txt':
-            flash('File extention should be txt', 'danger')
-            return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected)
+            file_exttintion = 1
+            return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected=isFB_Connected, file_submit=file_submit, file_exttintion = 1 )
 
         else:
             dest = "/".join([target, filename])
@@ -265,13 +303,13 @@ def manageBankData():
             flash('Successfully uploaded your business rules..', 'success')
             return render_template('analysisView.html', JOBID=task.id, form2=form2)
 
-        return redirect((url_for('manageBankData', form=form, form2=search_form, isFB_Connected = isFB_Connected)))
+        return redirect((url_for('manageBankData', form=form, form2=search_form, isFB_Connected = isFB_Connected, file_submit=file_submit)))
 
     if search_form.search_submit.data and search_form.validate_on_submit():
         return redirect((url_for('searchResult', id=search_form.search.data, form2=search_form)))
 
 
-    return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected = isFB_Connected)
+    return render_template("ManageBankData.html", form=form, form2=search_form, isFB_Connected = isFB_Connected, file_submit=file_submit)
 
 
 @app.route("/clientProfile/<id>", methods=['GET', 'POST'])
